@@ -1,0 +1,17 @@
+<layouts>
+    <layout id="MainLayout">
+        <drawable id="cellBg" class="CellBg">
+            <param name="lineWidth">1</param>
+            <param name="topHeight">66</param>
+            <param name="leftWidth">80</param>
+        </drawable>
+
+        <drawable id="metricR1C2" class="SimpleValue">
+            <param name="x">7</param>     
+            <param name="y">83</param>
+            <param name="width">72</param>     
+            <param name="height">33</param>
+        </drawable>
+
+    </layout>
+</layouts>
