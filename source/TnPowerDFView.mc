@@ -5,38 +5,50 @@ using Toybox.WatchUi as Ui;
 
 class TnPowerDFView extends Ui.DataField {
 
-    hidden var mValue as Numeric;
-    hidden var w as Number = 0;
-    hidden var h as Number = 0;
-    var numNormalFont = Ui.loadResource(Rez.Fonts.NumNormal);
+    hidden var fields as Array<Field> = new Array<Field>[8];
 
     function initialize() {
         DataField.initialize();
-        mValue = 0.0f;
     }
 
-    public function onLayout( dc as Dc ) as Void {
+    function onLayout( dc as Dc ) as Void {
         setLayout( $.Rez.Layouts.MainLayout( dc ) );
-        w = dc.getWidth();
-        h = dc.getHeight();
 
-        var v = findDrawableById("metricR1C2") as SimpleValue;
-        v.onLayout(dc);
-        v.setLabel("Pwr");
+        for (var i = 1; i <= fields.size(); i++) {
+            var f = findDrawableById("field" + i) as Field;
+            fields[i - 1] = f;
+            f.onLayout(dc);
+        }
     }
 
     function compute(info as Activity.Info) as Void {
-
+        for (var i = 0; i < fields.size(); i++) {
+            fields[i].compute(info);
+        }
     }
 
+    function onWorkoutStarted() as Void {
+        for (var i = 0; i < fields.size(); i++) {
+            fields[i].onWorkoutStep();
+        }
+    }
+
+    function onWorkoutStepComplete() as Void {
+        for (var i = 0; i < fields.size(); i++) {
+            fields[i].onWorkoutStep();
+        }
+    }
+
+
+  /*
     function onUpdate(dc as Dc) as Void {
 
-        (findDrawableById("metricR1C2") as SimpleValue).setValue("888");
+        //(findDrawableById("metricR1C2") as SimpleValue).onUp("888");
 
         View.onUpdate( dc );
 
    
-    /*
+  
         var tdm = dc.getTextDimensions("000", numNormalFont);
         var fcm = Graphics.getFontDescent(numNormalFont) - 4;
 
@@ -114,7 +126,8 @@ class TnPowerDFView extends Ui.DataField {
         dc.drawArc(w/2, h/2, w / 2 - 6, Graphics.ARC_COUNTER_CLOCKWISE, 230, 300);
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawArc(w/2, h/2, w / 2 - 6, Graphics.ARC_COUNTER_CLOCKWISE, 300, 310);
-    */
+    
     
     }
+    */
 }

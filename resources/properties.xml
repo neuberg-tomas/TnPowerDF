@@ -4,6 +4,7 @@
 
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>
-        <property id="colorLabel" type="number">0x555555</property>
+        <property id="labelColor" type="number">0x555555</property>
+        <property id="labelYOffset" type="number">-3</property>
     </properties>
 </resources>
