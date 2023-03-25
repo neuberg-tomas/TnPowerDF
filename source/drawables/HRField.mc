@@ -22,7 +22,8 @@ class HRField extends Field {
         }
     }
 
-    function compute(info as Activity.Info) as Void {
+    function compute(info as Activity.Info, timer as Number) as Void {
+        Field.compute(info, timer);
         var v = info.currentHeartRate;
         if (v != null) {
             _value = v.format("%d");

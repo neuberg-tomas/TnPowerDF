@@ -14,7 +14,8 @@ class PowerLapField extends Field {
         Field.initialize(params, "Lap Pwr");
     }
 
-    function compute(info as Activity.Info) as Void {
+    function compute(info as Activity.Info, timer as Number) as Void {
+        Field.compute(info, timer);
         if (info.timerState == Activity.TIMER_STATE_ON && info.currentPower != null) {
             _powerSum += info.currentPower;
             _powerCount ++;
@@ -24,10 +25,18 @@ class PowerLapField extends Field {
         }
     }
 
-    function onWorkoutStep() as Void {
-        Field.onWorkoutStep();
+    function onStop() as Void {
+        Field.onStop();
+        reset();
+    }
+
+    function onLap() as Void {
+        Field.onLap();
+        reset();
+    }
+
+    private function reset() as Void {
         _powerSum = 0l;
         _powerCount = 0;
     }
-
 }

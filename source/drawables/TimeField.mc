@@ -5,25 +5,26 @@ import Toybox.WatchUi;
 
 using Toybox.Application.Properties as Prop;
 
-class TimeField extends WorkoutField {
+class TimeField extends Field {
 
     private var _elapsedTime as String = "";
     private var _time as String = "";
 
     function initialize(params as Dictionary) {
-        WorkoutField.initialize(params, "T/Rem/Elap");
+        Field.initialize(params, "T/Rem/Elap");
     }
 
-    function compute(info as Activity.Info) as Void {
-        if (_stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME) {
-            _value = formatTimeMs(_stepDuration * 1000 - (info.timerTime - _stepStartTime));
-        } else if (_stepStartTime != null) {
-            _value = formatTimeMs(info.timerTime - _stepStartTime);
-        } else {
+    function compute(info as Activity.Info, timer as Number) as Void {
+        Field.compute(info, timer);
+        if (_workout == null) {
             _value = NO_VALUE;
+        } else if (_workout.stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME) {
+            _value = formatTime(_workout.stepDuration - (timer - _workout.stepStartTime) + 1);
+        } else {
+            _value = formatTime(timer - _workout.stepStartTime);
         }
 
-        _elapsedTime = formatTimeMs(info.timerTime);
+        _elapsedTime = formatTime(timer);
 
         var clock = System.getClockTime();
         _time = Lang.format("$1$:$2$", [
@@ -32,9 +33,12 @@ class TimeField extends WorkoutField {
         ]);
     }
 
+    function onStop() as Void {
+        Field.onStop();
+        _elapsedTime = "";
+    }
+
     function draw(dc as Dc) as Void {
         Field.draw(dc);
-
-        System.println(_time + " / " + _value + " / " + _elapsedTime);
     }
 }

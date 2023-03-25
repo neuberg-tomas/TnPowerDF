@@ -14,17 +14,28 @@ class DistLapField extends Field {
         Field.initialize(params, "Lap Dist");
     }
 
-    function compute(info as Activity.Info) as Void {
+    function compute(info as Activity.Info, timer as Number) as Void {
+        Field.compute(info, timer);
         if (info.elapsedDistance != null) {
-            _distance = info.elapsedDistance;
-            _value = (_distance - _startDistance).format("%4.1f");
+            _distance = info.elapsedDistance / 1000;
+                _value = (_distance - _startDistance).format("%.1f");
         } else {
             _value = NO_VALUE;
         }
     }
 
-    function onWorkoutStep() as Void {
-        Field.onWorkoutStep();
+    function onStop() as Void {
+        Field.onStop();
+        reset();
+    }
+
+    function onLap() as Void {
+        Field.onLap();
         _startDistance = _distance;
+    }
+
+    private function reset() as Void {
+        _startDistance = 0.0;
+        _distance = 0.0;    
     }
 }

@@ -15,7 +15,10 @@ class Field extends Drawable {
     protected var _fontHeights as Array<Number>;
     protected var _lblFontHieght as Number;
     protected var _lblColor as Number;
-    protected var _lblYOffset as Number;
+    protected var _lblYPadding as Number;
+    protected var _valueYPadding as Number;
+    protected var _workout as WorkoutInfo?;
+    protected var _timer as Number = 0;
 
     function initialize(params as Dictionary, label as String) {
         Drawable.initialize(params);
@@ -30,7 +33,8 @@ class Field extends Drawable {
         }
         _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
         _lblColor = Properties.getValue("labelColor") as Number;
-        _lblYOffset = Properties.getValue("labelYOffset") as Number;
+        _lblYPadding = Properties.getValue("labelYPadding") as Number;
+        _valueYPadding = Properties.getValue("valueYPadding") as Number;
 
         _x = params.get(:x) as Number;
         _y = params.get(:y) as Number;
@@ -41,21 +45,37 @@ class Field extends Drawable {
     function onLayout(dc as Dc) as Void {
     }
 
-    function compute(info as Activity.Info) as Void {
+    function compute(info as Activity.Info, timer as Number) as Void {
+        _timer = timer;
     }
 
-    function onWorkoutStep() as Void {
+    function onWorkoutStep(info as WorkoutInfo) as Void {
+        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onWorkoutStep");
+
+        _workout = info;
+        onLap();
+    }
+
+    function onStart() as Void {
+        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onStart");
+        _timer = 0;
+    }
+
+    function onStop() as Void {
+        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onStop");
+    }
+
+    function onLap() as Void {
+        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onLap");
     }
 
     function draw(dc as Dc) as Void {
         dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
-        if (_label != "") {
-            dc.drawText(_x + _width / 2, _y + _lblYOffset, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
+        if (_label != "") { 
+            dc.drawText(_x + _width / 2, _y - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
         }
 
         //System.println(_label + ": " + _value);
-
-        /*
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         var fontIdx = _fonts.size() - 1;
@@ -65,12 +85,11 @@ class Field extends Drawable {
                 break;
             }
         }
-        dc.drawText(_x + _width / 2, _y + _height - _fontHeights[fontIdx], _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
-        */
+        dc.drawText(_x + _width / 2, _y + _height - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
-    protected function formatTimeMs(time as Number) as String {
-        time = time <= 0 ? 0 : time.toNumber() / 1000;
+    protected function formatTime(time as Number) as String {
+        time = time <= 0 ? 0 : time.toNumber();
         var h = time / 3600;
         time %= 3600;
         var m = time / 60;

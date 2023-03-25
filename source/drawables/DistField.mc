@@ -11,8 +11,9 @@ class DistField extends Field {
         Field.initialize(params, "Dist");
     }
 
-    function compute(info as Activity.Info) as Void {
-        _value = info.elapsedDistance != null ? info.elapsedDistance.format("%4.1f") : NO_VALUE;
+    function compute(info as Activity.Info, timer as Number) as Void {
+        Field.compute(info, timer);
+        _value = info.elapsedDistance != null ? (info.elapsedDistance / 1000).format("%.1f") : NO_VALUE;
     }
 
 }

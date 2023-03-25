@@ -5,7 +5,10 @@ using Toybox.WatchUi as Ui;
 
 class TnPowerDFView extends Ui.DataField {
 
-    hidden var fields as Array<Field> = new Array<Field>[8];
+    private var _fields as Array<Field> = new Array<Field>[8];
+    private var _workout as WorkoutInfo?;
+    private var _timer as Number = 0;
+    private var _timerActive as Boolean = false;
 
     function initialize() {
         DataField.initialize();
@@ -14,28 +17,69 @@ class TnPowerDFView extends Ui.DataField {
     function onLayout( dc as Dc ) as Void {
         setLayout( $.Rez.Layouts.MainLayout( dc ) );
 
-        for (var i = 1; i <= fields.size(); i++) {
+        for (var i = 1; i <= _fields.size(); i++) {
             var f = findDrawableById("field" + i) as Field;
-            fields[i - 1] = f;
+            _fields[i - 1] = f;
             f.onLayout(dc);
         }
     }
 
-    function compute(info as Activity.Info) as Void {
-        for (var i = 0; i < fields.size(); i++) {
-            fields[i].compute(info);
+    function compute(info as Activity.Info) as Void {     
+        if (_timerActive) {
+            _timer++;
+        }
+        if (_fields[0] != null) {
+            for (var i = 0; i < _fields.size(); i++) {
+                _fields[i].compute(info, _timer);
+            }
         }
     }
 
     function onWorkoutStarted() as Void {
-        for (var i = 0; i < fields.size(); i++) {
-            fields[i].onWorkoutStep();
+        _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onWorkoutStep(_workout);
         }
     }
 
     function onWorkoutStepComplete() as Void {
-        for (var i = 0; i < fields.size(); i++) {
-            fields[i].onWorkoutStep();
+        _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onWorkoutStep(_workout);
+        }
+    }
+
+    function onTimerLap() as Void {
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onLap();
+        }
+    }
+
+    function onTimerStart() as Void {
+        _timer = 0;
+        _timerActive = true;
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onStart();
+        }
+    }
+
+    function onTimerPause() as Void {
+        _timerActive = false;
+    }
+
+    function onTimerResume() as Void {
+        _timerActive = true;
+    }
+
+    function onTimerStop() as Void {
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onStop();
+        }
+        if (_workout != null) {
+            _workout = new WorkoutInfo(_timer, null, null);
+            for (var i = 0; i < _fields.size(); i++) {
+                _fields[i].onWorkoutStep(_workout);
+            }
         }
     }
 
@@ -130,4 +174,55 @@ class TnPowerDFView extends Ui.DataField {
     
     }
     */
+}
+
+class WorkoutInfo {
+    var stepLo as Number?;
+    var stepHi as Number?;
+    var stepTargetType as WorkoutStepTargetType?;
+
+    var stepDuration as Number?;
+    var stepDurationType as WorkoutStepDurationType?;
+    var stepStartTime as Number;
+
+    var stepNextTargetType as WorkoutStepTargetType?;
+    var stepNextLo as Number?;
+    var stepNextHi as Number?;
+
+    function initialize(timer as Number, currStep as WorkoutStepInfo?, nextStep as WorkoutStepInfo?) {
+        stepStartTime = timer;
+
+        if (currStep == null || !(currStep.step instanceof WorkoutStep)) {
+            stepTargetType = null;
+            stepNextTargetType = null;
+            stepDurationType = null;
+            return;
+        }
+
+        var step = currStep.step as WorkoutStep;
+
+        stepTargetType = step.targetType;
+        stepLo = normalizeTarget(stepTargetType, step.targetValueLow);
+        stepHi = normalizeTarget(stepTargetType, step.targetValueHigh);
+        
+        stepDurationType = step.durationType;
+        stepDuration = step.durationValue;
+    
+        if (nextStep == null || !(nextStep.step instanceof WorkoutStep)) {
+            stepNextTargetType = null;
+        } else {
+            step = nextStep.step as WorkoutStep;
+            stepNextTargetType = step.targetType;
+            stepNextLo = normalizeTarget(stepNextTargetType, step.targetValueLow);
+            stepNextHi = normalizeTarget(stepNextTargetType, step.targetValueHigh);
+        }
+    }
+
+    private function normalizeTarget(type as WorkoutStepTargetType?, value as Number?) as Number? {
+        return value == null || type == null || type != Activity.WORKOUT_STEP_TARGET_POWER || value == 0 ? value : value - 1000; 
+    }
+
+    function isSet() as Boolean {
+        return stepTargetType != null;
+    }
 }

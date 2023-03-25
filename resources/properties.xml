@@ -4,7 +4,32 @@
 
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>
+        
         <property id="labelColor" type="number">0x555555</property>
-        <property id="labelYOffset" type="number">-3</property>
+        <property id="labelYPadding" type="number">2</property>
+
+        <property id="valueColor" type="number">0x000000</property>
+        <property id="valueLoColor" type="number">0xFF0000</property>
+        <property id="valueHiColor" type="number">0xFF00FF</property>
+        <property id="valueYPadding" type="number">5</property>
+
+        <property id="zone1Color" type="number">0xAAAAAA</property>
+        <property id="zone2Color" type="number">0xFF5500</property>
+        <property id="zone3Color" type="number">0x00AAFF</property>
+        <property id="zone4Color" type="number">0x00FF00</property>
+        <property id="zone5Color" type="number">0xFF0000</property>
+        <property id="zoneColorAsBg" type="boolean">true</property>
+
+        <property id="ftp" type="number">318</property>
+        <property id="powerZone1PercMin" type="number">65</property>
+        <property id="powerZone1PercMax" type="number">80</property>
+        <property id="powerZone2PercMax" type="number">90</property>
+        <property id="powerZone3PercMax" type="number">100</property>
+        <property id="powerZone4PercMax" type="number">115</property>
+
+        <property id="powerTargetLo" type="number">210</property>
+        <property id="powerTargetHi" type="number">250</property>
+
+        <property id="useAlerts" type="boolean">true</property>
     </properties>
 </resources>
