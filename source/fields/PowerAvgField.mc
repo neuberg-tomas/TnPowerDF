@@ -7,13 +7,24 @@ using Toybox.Application.Properties as Prop;
 
 class PowerAvgField extends Field {
 
+    const LBL = "Avg Pwr";
+
     function initialize() {
-        Field.initialize("Avg Pwr");
+        Field.initialize(LBL);
     }
 
-    function compute(info as Activity.Info, timer as Number?) as Void {
-        Field.compute(info, timer);
-        _value = info.averagePower ? info.averagePower.format("%d") : NO_VALUE;
+    function compute(info as Activity.Info, context as ComputeContext) as Void {
+        Field.compute(info, context);
+        var v = info.averagePower;
+        if (v == null) {
+            _value = NO_VALUE;
+            _label = LBL;
+        } else {
+            _value = v.format("%d");
+            var zone = context.getPowerZone(v);
+            setZone(zone);
+            _label = zone == null ? LBL : LBL + " " + zone;
+        }
     }
 
 }

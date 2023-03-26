@@ -17,6 +17,11 @@ class Field {
     protected var _lblYPadding as Number;
     protected var _valueYPadding as Number;
     protected var _workout as WorkoutInfo?;
+    protected var _zone as Number?;
+    protected var _zoneColor as Number?;
+    protected var _zoneColorAsBg as Boolean;
+    protected var _alert as Number = 0;
+    protected var _valueColor as Number;
 
     function initialize(label as String) {
         _label = label;
@@ -30,18 +35,20 @@ class Field {
         }
         _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
         _lblColor = Properties.getValue("labelColor") as Number;
+        _valueColor = Properties.getValue("valueColor") as Number;
         _lblYPadding = Properties.getValue("labelYPadding") as Number;
         _valueYPadding = Properties.getValue("valueYPadding") as Number;
+        _zoneColorAsBg = Properties.getValue("zoneColorAsBg") as Boolean;
     }
 
     function onLayout(dc as Dc) as Void {
     }
 
-    function compute(info as Activity.Info, timer as Number?) as Void {
+    function compute(info as Activity.Info, context as ComputeContext) as Void {
     }
 
     function onWorkoutStep(info as WorkoutInfo) as Void {
-        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onWorkoutStep, workout=" + info);
+        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onWorkoutStep, workout=" + info.dump());
 
         _workout = info;
         onLap();
@@ -59,23 +66,68 @@ class Field {
         System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onLap");
     }
 
+    protected function setZone(zone as Number?) as Void {
+        if (zone == null) {
+            _zone = null;
+            _zoneColor = null;
+            return;
+        }
+        if (zone < 1) {
+            zone = 1;
+        } else if (zone > 5) {
+            zone = 5;
+        }
+        if (_zone == null || _zone != zone) {
+            _zone = zone;
+            _zoneColor = Properties.getValue("zone" + zone + "Color") as Number;
+        }
+    }
+
+    protected function setAlert(alert as Number) as Void {
+        if (alert != _alert) {
+            _alert = alert;
+            switch(alert) {
+                case 1:
+                    _valueColor = Properties.getValue("valueLoColor") as Number;
+                    break;
+                case 2:
+                    _valueColor = Properties.getValue("valueHiColor") as Number;
+                    break;
+                default:
+                    _valueColor = Properties.getValue("valueColor") as Number;
+                    break;
+            }
+        }
+    }
+
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
-        dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
         if (_label != "") { 
+            if (_zoneColor != null) {
+                if (_zoneColorAsBg) {
+                    dc.setColor(_zoneColor, Graphics.COLOR_TRANSPARENT);
+                    dc.fillRectangle(x, y, w, _lblFontHieght + 1);
+                    dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
+                } else {
+                    dc.setColor(_zoneColor, Graphics.COLOR_TRANSPARENT);
+                }
+            } else {
+                dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
+            }
             dc.drawText(x + w / 2, y - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
         }
 
-        //System.println(_label + ": " + _value);
+        dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
+        var fontIdx = getFontIdx(dc, _value, w);
+        dc.drawText(x + w / 2, y + h - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
+    }
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        var fontIdx = _fonts.size() - 1;
+    protected function getFontIdx(dc as Dc, text as String, width as Number) {
         for (var i = 0; i < _fonts.size(); i++) {
-            if (dc.getTextWidthInPixels(_value, _fonts[i]) <= w) {
-                fontIdx = i;
-                break;
+            if (dc.getTextWidthInPixels(text, _fonts[i]) <= width) {
+                return i;
             }
         }
-        dc.drawText(x + w / 2, y + h - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
+        return _fonts.size() - 1;
     }
 
     protected function formatTime(time as Number) as String {

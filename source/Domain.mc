@@ -57,3 +57,35 @@ class WorkoutInfo {
         ]);
     }
 }
+
+class ComputeContext {
+    private var _powerZones as Array<Number>?;
+    private var _heartRateZones as Array<Number>?;
+    var timer as Number?;
+
+    function initialize(timer as Number, powerZones as Array<Number>?, heartRateZones as Array<Number>?) {
+        self.timer = timer;
+        _powerZones = powerZones;
+        _heartRateZones = heartRateZones;
+    }
+
+    function getHeartRateZone(value as Number?) {
+        return findZone(value, _heartRateZones);
+    }
+
+    function getPowerZone(value as Number?) {
+        return findZone(value, _powerZones);
+    }
+
+    private function findZone(value as Number?, zones as Array<Number>) as Number? {
+        if (value == null || zones == null || zones.size() <= 1 || value < zones[0]) {
+            return null;
+        }
+        var zone = 1;
+        var s = zones.size();
+        while (zone < s && value > zones[zone]) {
+            zone++;
+        }
+        return zone;
+    }
+}

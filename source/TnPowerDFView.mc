@@ -9,7 +9,7 @@ class TnPowerDFView extends Ui.DataField {
     private var _fields as Array<Field> = [
         new PowerField(),
         new HRField(), new PowerLapField(), new PowerAvgField(),
-        new PaceAvgField(), new DistField(), new DistLapField(),
+        new PaceAvgField(), new DistLapField(), new DistField(),
         new TimeField()
     ] as Array<Field>;
 
@@ -19,12 +19,32 @@ class TnPowerDFView extends Ui.DataField {
     private var _lineWidth as Number = 1;
     private var _timer as Number = 0;
     private var _timerActive as Boolean = false;
+    private var _heartRateZones as Array<Number>?;
+    private var _powerZones as Array<Number> = new Array<Number>[5];
 
     function initialize() {
         DataField.initialize();
 
         _bgColor = Prop.getValue("colorBg");
         _lineColor = Prop.getValue("colorLines");
+
+        var heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_RUNNING);
+        if (heartRateZones == null) {
+            System.println("no run specific HR zones found, using generic ones");
+            heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
+        }
+        if (heartRateZones != null && heartRateZones.size() > 2) {
+            _heartRateZones = new Array<Number>[heartRateZones.size() - 1];
+            for (var i = 1; i < heartRateZones.size(); i++) {
+                _heartRateZones[i - 1] = heartRateZones[i];
+            }
+        }
+
+        var ftp = Prop.getValue("ftp") as Number;
+        _powerZones[0] = computePowerZone(ftp, Prop.getValue("powerZone1PercMin") as Number);
+        for (var i = 1; i < _powerZones.size(); i++) {
+            _powerZones[i] = computePowerZone(ftp, Prop.getValue("powerZone" + i + "PercMax") as Number);
+        }
     }
 
     function compute(info as Activity.Info) as Void {     
@@ -35,9 +55,15 @@ class TnPowerDFView extends Ui.DataField {
             onWorkoutStepComplete();
         }
 
+        var context = new ComputeContext(_timer, _powerZones, _heartRateZones);
+
         for (var i = 0; i < _fields.size(); i++) {
-            _fields[i].compute(info, _timer);
-        }
+            _fields[i].compute(info, context);
+        }   
+    }
+
+    private function computePowerZone(ftp as Number, perc as Number) {
+        return Math.round(ftp * perc / 100.0).toNumber();
     }
 
     function onWorkoutStarted() as Void {
@@ -49,14 +75,12 @@ class TnPowerDFView extends Ui.DataField {
 
     function onWorkoutStepComplete() as Void {
         _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
-        System.println("******** stepComplete: " + _workout.dump());
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
         }
     }
 
     function onTimerLap() as Void {
-        System.println("******** lap");
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onLap();
         }
@@ -97,7 +121,7 @@ class TnPowerDFView extends Ui.DataField {
         var h1 = (h / 4 * 1.1).toNumber();
         var h2 = h / 2;
         var h3 = h - h1;
-        var wo = Math.round(w * 0.04).toNumber();
+        var wo = Math.round(w * 0.05).toNumber();
         var w1 = Math.round(w * 0.34).toNumber();
 
         dc.drawLine(wo, h1, w - wo, h1);

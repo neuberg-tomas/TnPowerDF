@@ -7,18 +7,20 @@ using Toybox.Application.Properties as Prop;
 
 class DistLapField extends Field {
 
-    private var _startDistance as Float = 0.0;
-    private var _distance as Float = 0.0;
+    private var _startDistance as Float?;
 
     function initialize() {
         Field.initialize("Lap Dist");
     }
 
-    function compute(info as Activity.Info, timer as Number?) as Void {
-        Field.compute(info, timer);
+    function compute(info as Activity.Info, context as ComputeContext) as Void {
+        Field.compute(info, context);
         if (info.elapsedDistance != null) {
-            _distance = info.elapsedDistance / 1000;
-            _value = (_distance - _startDistance).format("%.1f");
+            var distance = info.elapsedDistance / 1000;
+            if (_startDistance == null) {
+                _startDistance = distance;
+            }
+            _value = (distance - _startDistance).format("%.1f");
         } else {
             _value = NO_VALUE;
         }
@@ -26,18 +28,16 @@ class DistLapField extends Field {
 
     function onStart() as Void {
         Field.onStart();
-        _startDistance = 0.0;
-        _distance = 0.0;
+        _startDistance = null;
     }
 
     function onStop() as Void {
         Field.onStop();
-        var info = Activity.getActivityInfo();
-        _startDistance = info == null ? _distance : info.elapsedDistance;
+        _startDistance = null;
     }
 
     function onLap() as Void {
         Field.onLap();
-        _startDistance = _distance;
+        _startDistance = null;
     }
 }

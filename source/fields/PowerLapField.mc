@@ -7,28 +7,41 @@ using Toybox.Application.Properties as Prop;
 
 class PowerLapField extends Field {
 
+    const LBL = "Lap Pwr";
+
     private var _powerSum as Long = 0l;
     private var _powerCount as Number = 0;
     private var _prevTimer as Number = -1;
 
     function initialize() {
-        Field.initialize("Lap Pwr");
+        Field.initialize(LBL);
     }
 
-    function compute(info as Activity.Info, timer as Number?) as Void {
-        Field.compute(info, timer);
-        if (timer != null) {
-            if (timer != _prevTimer && info.currentPower != null) {
+    function compute(info as Activity.Info, context as ComputeContext) as Void {
+        Field.compute(info, context);
+        if (context.timer != null) {
+            if (context.timer != _prevTimer && info.currentPower != null) {
                 _powerSum += info.currentPower;
                 _powerCount ++;
             }
-            _prevTimer = timer;
+            _prevTimer = context.timer;
         }
         
         if (_powerCount > 0) {
-            _value = (_powerSum / _powerCount).format("%d");
+            var v = (_powerSum / _powerCount).toNumber();
+            _value = v.format("%d");
+            var zone = context.getPowerZone(v);
+            _label = zone == null ? LBL : LBL + " " + zone;
+            setZone(zone);
+            if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
+                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0);
+            } else {
+                setAlert(0);
+            }
+
         } else {
             _value = NO_VALUE;
+            setAlert(0);
         }
     }
 
