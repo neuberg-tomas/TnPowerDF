@@ -9,6 +9,7 @@ class WorkoutInfo {
     var stepDuration as Number?;
     var stepDurationType as WorkoutStepDurationType?;
     var stepStartTime as Number;
+    var almostFinishTime as Number?;
 
     var stepNextTargetType as WorkoutStepTargetType?;
     var stepNextLo as Number?;
@@ -18,9 +19,6 @@ class WorkoutInfo {
         stepStartTime = timer;
 
         if (currStep == null || !(currStep.step instanceof WorkoutStep)) {
-            stepTargetType = null;
-            stepNextTargetType = null;
-            stepDurationType = null;
             return;
         }
 
@@ -32,10 +30,12 @@ class WorkoutInfo {
         
         stepDurationType = step.durationType;
         stepDuration = step.durationValue;
+
+        if (stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME && stepDuration > 3) {
+            almostFinishTime =  stepStartTime + (stepDuration - 3) * 1000;
+        }
     
-        if (nextStep == null || !(nextStep.step instanceof WorkoutStep)) {
-            stepNextTargetType = null;
-        } else {
+        if (nextStep != null && (nextStep.step instanceof WorkoutStep)) {
             step = nextStep.step as WorkoutStep;
             stepNextTargetType = step.targetType;
             stepNextLo = normalizeTarget(stepNextTargetType, step.targetValueLow);

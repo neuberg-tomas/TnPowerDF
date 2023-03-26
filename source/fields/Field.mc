@@ -101,11 +101,19 @@ class Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
+        drawLabel(dc, x + w / 2, y, x);
+
+        dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
+        var fontIdx = getFontIdx(dc, _value, w);
+        dc.drawText(x + w / 2, y + h - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    protected function drawLabel(dc as Dc, x as Number, y as Number, bgX as Number) as Void {
         if (_label != "") { 
             if (_zoneColor != null) {
                 if (_zoneColorAsBg) {
                     dc.setColor(_zoneColor, Graphics.COLOR_TRANSPARENT);
-                    dc.fillRectangle(x, y, w, _lblFontHieght + 1);
+                    dc.fillRectangle(bgX, y, (x - bgX) * 2, _lblFontHieght + 2);
                     dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
                 } else {
                     dc.setColor(_zoneColor, Graphics.COLOR_TRANSPARENT);
@@ -113,12 +121,8 @@ class Field {
             } else {
                 dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
             }
-            dc.drawText(x + w / 2, y - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
+            dc.drawText(x, y - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
         }
-
-        dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
-        var fontIdx = getFontIdx(dc, _value, w);
-        dc.drawText(x + w / 2, y + h - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     protected function getFontIdx(dc as Dc, text as String, width as Number) {

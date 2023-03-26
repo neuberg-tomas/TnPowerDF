@@ -8,26 +8,35 @@ using Toybox.Application.Properties as Prop;
 class PowerField extends Field {
 
     const LBL = "Pwr";
+    private var _almostFinish as Boolean = false;
+    private var _nextTargetColor as Number;
+    private var _valueMutedColor as Number;
+    private var _gaugeColor as Number;
+    private var _power as Number?;
 
     function initialize() {
         Field.initialize(LBL);
+        _nextTargetColor = Prop.getValue("nextTargetColor") as Number;
+        _valueMutedColor = Prop.getValue("valueMutedColor") as Number;
+        _gaugeColor = Prop.getValue("valueColor") as Number;
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
-        var v = info.currentPower;
-        if (v == null) {
+        _power = info.currentPower;
+        _almostFinish = _workout != null && _workout.almostFinishTime != null && context.timer >= _workout.almostFinishTime;
+        if (_power == null) {
             _label = LBL;
             _value = NO_VALUE;
             setZone(null);
             setAlert(0);
         } else {
-            _value = v.format("%d");
-            var zone = context.getPowerZone(v);
+            _value = _power.format("%d");
+            var zone = context.getPowerZone(_power);
             setZone(zone);
             _label = zone == null ? LBL : LBL + " " + zone;
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
-                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0);
+                setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0);
             } else {
                 setAlert(0);
             }
@@ -35,6 +44,75 @@ class PowerField extends Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
-        Field.draw(dc, x, y, w, h);
+        var w2 = w / 2;
+        var fw2 = Math.round(w * 0.35).toNumber();
+        var fw1 = Math.round((w2 - fw2 / 2) * 0.6);
+        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.025);
+
+        drawLabel(dc, x + w2, y + h - _fontHeights[0] - _lblFontHieght - _valueYPadding, x + w2 - fw2 / 2);
+
+        var lo = "", hi = "";
+
+        if (_workout != null) {
+
+            if (_workout.isSet() && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER && _power != null) {
+
+                var sw2 = dc.getWidth() / 2;
+                var sh2 = dc.getHeight() / 2;
+                var pw = Math.round(dc.getWidth() * 0.03).toNumber();
+                var r = sw2 - pw / 2;
+                dc.setPenWidth(pw);
+                sw2--;
+                sh2--;
+
+                var a0 = 45, a1 = 70, a2 = 110, a3 = 135;
+
+                dc.setPenWidth(pw);
+                dc.setColor(Graphics.COLOR_PINK, Graphics.COLOR_TRANSPARENT);
+                dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, a0, a1);
+                dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+                dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, a1, a2);
+                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, a2, a3);
+
+                dc.setPenWidth(pw * 2);
+                var min = 0;
+                var vlo = _workout.stepLo;
+                var vhi = _workout.stepHi;
+                var max = vhi + (vlo - min);
+                var a = _power <= min ? a3 : 
+                    _power <= vlo ? a3 - (a3 - a2) * (_power - min) / (vlo - min) :
+                    _power <= vhi ? a2 - (a2 - a1) * (_power - vlo) / (vhi - vlo) :
+                    _power <= max ? a1 - (a1 - a0) * (_power - vhi) / (max - vhi) : 
+                    a0;
+
+                dc.setColor(_gaugeColor, Graphics.COLOR_TRANSPARENT);
+                dc.drawArc(sw2, sh2, r - pw / 2, Graphics.ARC_COUNTER_CLOCKWISE, a-1, a+1);
+            }                        
+
+            if (_workout.stepNextTargetType != null && _workout.stepNextTargetType == Activity.WORKOUT_STEP_TARGET_POWER && _almostFinish) {
+                lo = _workout.stepNextLo.format("%d");
+                hi = _workout.stepNextHi.format("%d");
+                dc.setColor(_nextTargetColor, Graphics.COLOR_TRANSPARENT);
+            } else if (_workout.isSet() && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
+                lo = _workout.stepLo.format("%d");
+                hi = _workout.stepHi.format("%d");
+                dc.setColor(_valueMutedColor, Graphics.COLOR_TRANSPARENT);
+            }
+        }
+
+
+        if (lo != "") {
+            var fi = getFontIdx(dc, lo, fw1);
+            dc.drawText(x + xo + fw1, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], lo, Graphics.TEXT_JUSTIFY_RIGHT);
+
+            fi = getFontIdx(dc, hi, fw1);
+            dc.drawText(x + w - fw1 - xo, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], hi, Graphics.TEXT_JUSTIFY_LEFT);
+        }
+
+        dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
+        var fi = getFontIdx(dc, _value, fw2);
+        dc.drawText(x + w2, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], _value, Graphics.TEXT_JUSTIFY_CENTER);      
+
     }
 }

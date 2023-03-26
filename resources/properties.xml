@@ -13,6 +13,7 @@
         <property id="valueLoColor" type="number">0xFF0000</property>
         <property id="valueHiColor" type="number">0xFF00FF</property>
         <property id="valueYPadding" type="number">5</property>
+        <property id="nextTargetColor" type="number">#0000FF</property>
 
         <property id="zone1Color" type="number">0xAAAAAA</property>
         <property id="zone2Color" type="number">0xFFAA00</property>
