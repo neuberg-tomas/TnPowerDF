@@ -23,7 +23,7 @@
         <property id="zoneColorAsBg" type="boolean">true</property>
 
         <property id="ftp" type="number">318</property>
-        <property id="powerZone1PercMin" type="number">40</property>
+        <property id="powerZone1PercMin" type="number">65</property>
         <property id="powerZone1PercMax" type="number">80</property>
         <property id="powerZone2PercMax" type="number">90</property>
         <property id="powerZone3PercMax" type="number">100</property>
