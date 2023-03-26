@@ -5,7 +5,7 @@
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>
         
-        <property id="labelColor" type="number">0x555555</property>
+        <property id="labelColor" type="number">0x000000</property>
         <property id="labelYPadding" type="number">2</property>
 
         <property id="valueColor" type="number">0x000000</property>

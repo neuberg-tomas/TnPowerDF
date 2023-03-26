@@ -13,8 +13,8 @@ class HRField extends Field {
     private var _zones as Array<Number>;
     private var _zone as Number = 0;
 
-    function initialize(params as Dictionary) {
-        Field.initialize(params, LBL);
+    function initialize() {
+        Field.initialize(LBL);
         
         _zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_RUNNING);
         if (_zones == null || _zones.size() == 0) {
@@ -22,7 +22,7 @@ class HRField extends Field {
         }
     }
 
-    function compute(info as Activity.Info, timer as Number) as Void {
+    function compute(info as Activity.Info, timer as Number?) as Void {
         Field.compute(info, timer);
         var v = info.currentHeartRate;
         if (v != null) {

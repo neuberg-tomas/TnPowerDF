@@ -2,36 +2,41 @@ import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
 using Toybox.WatchUi as Ui;
+using Toybox.Application.Properties as Prop;
 
 class TnPowerDFView extends Ui.DataField {
 
-    private var _fields as Array<Field> = new Array<Field>[8];
+    private var _fields as Array<Field> = [
+        new PowerField(),
+        new HRField(), new PowerLapField(), new PowerAvgField(),
+        new PaceAvgField(), new DistField(), new DistLapField(),
+        new TimeField()
+    ] as Array<Field>;
+
     private var _workout as WorkoutInfo?;
+
+    private var _bgColor as Number, _lineColor as Number;
+    private var _lineWidth as Number = 1;
     private var _timer as Number = 0;
     private var _timerActive as Boolean = false;
 
     function initialize() {
         DataField.initialize();
-    }
 
-    function onLayout( dc as Dc ) as Void {
-        setLayout( $.Rez.Layouts.MainLayout( dc ) );
-
-        for (var i = 1; i <= _fields.size(); i++) {
-            var f = findDrawableById("field" + i) as Field;
-            _fields[i - 1] = f;
-            f.onLayout(dc);
-        }
+        _bgColor = Prop.getValue("colorBg");
+        _lineColor = Prop.getValue("colorLines");
     }
 
     function compute(info as Activity.Info) as Void {     
         if (_timerActive) {
-            _timer++;
+            _timer += 1000;
         }
-        if (_fields[0] != null) {
-            for (var i = 0; i < _fields.size(); i++) {
-                _fields[i].compute(info, _timer);
-            }
+        if (_workout != null && _workout.isSet() && Activity.getCurrentWorkoutStep() == null) {
+            onWorkoutStepComplete();
+        }
+
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].compute(info, _timer);
         }
     }
 
@@ -44,12 +49,14 @@ class TnPowerDFView extends Ui.DataField {
 
     function onWorkoutStepComplete() as Void {
         _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+        System.println("******** stepComplete: " + _workout.dump());
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
         }
     }
 
     function onTimerLap() as Void {
+        System.println("******** lap");
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onLap();
         }
@@ -63,6 +70,13 @@ class TnPowerDFView extends Ui.DataField {
         }
     }
 
+    function onTimerStop() as Void {
+        _timerActive = false;
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onStop();
+        }
+    }
+
     function onTimerPause() as Void {
         _timerActive = false;
     }
@@ -71,26 +85,49 @@ class TnPowerDFView extends Ui.DataField {
         _timerActive = true;
     }
 
-    function onTimerStop() as Void {
-        for (var i = 0; i < _fields.size(); i++) {
-            _fields[i].onStop();
-        }
-        if (_workout != null) {
-            _workout = new WorkoutInfo(_timer, null, null);
-            for (var i = 0; i < _fields.size(); i++) {
-                _fields[i].onWorkoutStep(_workout);
-            }
-        }
+
+    function onUpdate(dc as Dc) as Void {
+        dc.setColor(_lineColor, _bgColor);
+        dc.setPenWidth(_lineWidth);
+        dc.clear();
+
+        var w = dc.getWidth();
+        var h = dc.getHeight();
+
+        var h1 = (h / 4 * 1.1).toNumber();
+        var h2 = h / 2;
+        var h3 = h - h1;
+        var wo = Math.round(w * 0.04).toNumber();
+        var w1 = Math.round(w * 0.34).toNumber();
+
+        dc.drawLine(wo, h1, w - wo, h1);
+        dc.drawLine(0, h2, w, h2);
+        dc.drawLine(wo, h3, w - wo, h3);
+        dc.drawLine(w1, h1, w1, h3);
+        dc.drawLine(w - w1, h1, w - w1, h3);
+
+        var fw1 = w - 2 * wo - 1;
+        var fw2_1 = w1 - wo - 1;
+        var fw2_2 = w - w1 * 2 - 1;
+        var fh1 = h1 - 1;
+        var fh2 = h2 - h1 - 1;
+        
+
+
+        _fields[0].draw(dc, wo, 0, fw1, fh1);
+
+        _fields[1].draw(dc, wo, h1 + 1, fw2_1, fh2);
+        _fields[2].draw(dc, w1 + 1, h1 + 1, fw2_2, fh2);
+        _fields[3].draw(dc, w - w1 + 1, h1 + 1, fw2_1, fh2);
+
+        _fields[4].draw(dc, wo, h2 + 1, fw2_1, fh2);
+        _fields[5].draw(dc, w1 + 1, h2 + 1, fw2_2, fh2);
+        _fields[6].draw(dc, w - w1 + 1, h2 + 1, fw2_1, fh2);
+
+        _fields[7].draw(dc, wo, h3 + 1, fw1, fh1);
     }
 
-
   /*
-    function onUpdate(dc as Dc) as Void {
-
-        //(findDrawableById("metricR1C2") as SimpleValue).onUp("888");
-
-        View.onUpdate( dc );
-
    
   
         var tdm = dc.getTextDimensions("000", numNormalFont);
@@ -174,55 +211,4 @@ class TnPowerDFView extends Ui.DataField {
     
     }
     */
-}
-
-class WorkoutInfo {
-    var stepLo as Number?;
-    var stepHi as Number?;
-    var stepTargetType as WorkoutStepTargetType?;
-
-    var stepDuration as Number?;
-    var stepDurationType as WorkoutStepDurationType?;
-    var stepStartTime as Number;
-
-    var stepNextTargetType as WorkoutStepTargetType?;
-    var stepNextLo as Number?;
-    var stepNextHi as Number?;
-
-    function initialize(timer as Number, currStep as WorkoutStepInfo?, nextStep as WorkoutStepInfo?) {
-        stepStartTime = timer;
-
-        if (currStep == null || !(currStep.step instanceof WorkoutStep)) {
-            stepTargetType = null;
-            stepNextTargetType = null;
-            stepDurationType = null;
-            return;
-        }
-
-        var step = currStep.step as WorkoutStep;
-
-        stepTargetType = step.targetType;
-        stepLo = normalizeTarget(stepTargetType, step.targetValueLow);
-        stepHi = normalizeTarget(stepTargetType, step.targetValueHigh);
-        
-        stepDurationType = step.durationType;
-        stepDuration = step.durationValue;
-    
-        if (nextStep == null || !(nextStep.step instanceof WorkoutStep)) {
-            stepNextTargetType = null;
-        } else {
-            step = nextStep.step as WorkoutStep;
-            stepNextTargetType = step.targetType;
-            stepNextLo = normalizeTarget(stepNextTargetType, step.targetValueLow);
-            stepNextHi = normalizeTarget(stepNextTargetType, step.targetValueHigh);
-        }
-    }
-
-    private function normalizeTarget(type as WorkoutStepTargetType?, value as Number?) as Number? {
-        return value == null || type == null || type != Activity.WORKOUT_STEP_TARGET_POWER || value == 0 ? value : value - 1000; 
-    }
-
-    function isSet() as Boolean {
-        return stepTargetType != null;
-    }
 }

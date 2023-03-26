@@ -9,16 +9,23 @@ class PowerLapField extends Field {
 
     private var _powerSum as Long = 0l;
     private var _powerCount as Number = 0;
+    private var _prevTimer as Number = -1;
 
-    function initialize(params as Dictionary) {
-        Field.initialize(params, "Lap Pwr");
+    function initialize() {
+        Field.initialize("Lap Pwr");
     }
 
-    function compute(info as Activity.Info, timer as Number) as Void {
+    function compute(info as Activity.Info, timer as Number?) as Void {
         Field.compute(info, timer);
-        if (info.timerState == Activity.TIMER_STATE_ON && info.currentPower != null) {
-            _powerSum += info.currentPower;
-            _powerCount ++;
+        if (timer != null) {
+            if (timer != _prevTimer && info.currentPower != null) {
+                _powerSum += info.currentPower;
+                _powerCount ++;
+            }
+            _prevTimer = timer;
+        }
+        
+        if (_powerCount > 0) {
             _value = (_powerSum / _powerCount).format("%d");
         } else {
             _value = NO_VALUE;
