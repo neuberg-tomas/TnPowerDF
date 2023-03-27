@@ -1,4 +1,5 @@
 import Toybox.Activity;
+import Toybox.Attention;
 import Toybox.Lang;
 import Toybox.Graphics;
 import Toybox.WatchUi;
@@ -22,6 +23,8 @@ class Field {
     protected var _zoneColorAsBg as Boolean;
     protected var _alert as Number = 0;
     protected var _valueColor as Number;
+    private var   _alertDelay as Number = 0;
+    private var   _alertNextPlay as Number = 0;
 
     function initialize(label as String) {
         _label = label;
@@ -83,7 +86,11 @@ class Field {
         }
     }
 
-    protected function setAlert(alert as Number) as Void {
+    protected function clearAlert() {
+        setAlert(0, false, null);
+    }
+
+    protected function setAlert(alert as Number, sound as Boolean, context as ComputeContext?) as Void {
         if (alert != _alert) {
             _alert = alert;
             switch(alert) {
@@ -97,6 +104,31 @@ class Field {
                     _valueColor = Properties.getValue("valueColor") as Number;
                     break;
             }
+            _alertDelay = Properties.getValue("altertDelaySecMin") as Number;
+            _alertNextPlay = 0;
+        }
+        if (sound && alert > 0 && context != null && context.timer != null && context.timer >= _alertNextPlay) {
+            playAlert(context.timer);
+        }
+    }
+
+    private function playAlert(timer as Number) {
+        if (_alert == 1) {
+            Attention.playTone(Attention.TONE_ALERT_LO);
+            Attention.vibrate([
+                new VibeProfile(100, 1000), new VibeProfile(0, 750), new VibeProfile(100, 1000)
+            ]);
+        } else if (_alert == 2) {
+            Attention.playTone(Attention.TONE_ALERT_HI);
+            Attention.vibrate([
+                new VibeProfile(100, 1500)
+            ]);
+        }
+        _alertNextPlay = timer + _alertDelay * 1000;
+        _alertDelay = (_alertDelay * (Properties.getValue("altertDelayMultiplier") as Float)).toNumber();
+        var max = Properties.getValue("altertDelaySecMax") as Number;
+        if (_alertDelay > max) {
+            _alertDelay = max;
         }
     }
 

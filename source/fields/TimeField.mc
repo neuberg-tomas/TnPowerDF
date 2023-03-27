@@ -65,7 +65,7 @@ class TimeField extends Field {
         if (_remValuePerc != null) {
             var sw2 = dc.getWidth() / 2;
             var sh2 = dc.getHeight() / 2;
-            var pw = Math.round(dc.getWidth() * 0.02).toNumber();
+            var pw = Math.round(dc.getWidth() * 0.025).toNumber();
             var r = sw2 - pw / 2;
             dc.setPenWidth(pw);
             sw2--;

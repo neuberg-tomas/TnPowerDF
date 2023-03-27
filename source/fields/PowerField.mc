@@ -29,16 +29,16 @@ class PowerField extends Field {
             _label = LBL;
             _value = NO_VALUE;
             setZone(null);
-            setAlert(0);
+            clearAlert();
         } else {
             _value = _power.format("%d");
             var zone = context.getPowerZone(_power);
             setZone(zone);
             _label = zone == null ? LBL : LBL + " " + zone;
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
-                setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0);
+                setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0, Prop.getValue("altertType") == 2, context);
             } else {
-                setAlert(0);
+                clearAlert();
             }
         }
     }
