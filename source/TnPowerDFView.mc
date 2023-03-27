@@ -22,6 +22,16 @@ class TnPowerDFView extends Ui.DataField {
     private var _heartRateZones as Array<Number>?;
     private var _powerZones as Array<Number> = new Array<Number>[5];
 
+    private var _b24 as Float; // Converted power based on altitude -- From
+    private var _b7 as Float;
+    private var _b9 as Float;
+    private var _b38 as Float; //Hudley model percentage -- From
+    private var _b39 as Float; //Hudley model percentage -- To
+
+    private var _envF1 as Float = (9.80665 * 0.0289644) / (8.31432 * -0.0065);
+    private var _useAltSensor as Boolean;
+    private var _useEnvCorrection as Boolean;
+
     function initialize() {
         DataField.initialize();
 
@@ -45,6 +55,25 @@ class TnPowerDFView extends Ui.DataField {
         for (var i = 1; i < _powerZones.size(); i++) {
             _powerZones[i] = computePowerZone(ftp, Prop.getValue("powerZone" + i + "PercMax") as Number);
         }
+
+        // pre-compute env correction
+        _useAltSensor = Prop.getValue("envCurrAltSensor") as Boolean;
+        _useEnvCorrection = Prop.getValue("envCorrection") as Boolean;
+        var b4 = Prop.getValue("envTestAlt") as Number;
+        var b6 = Prop.getValue("envTestTmp") as Number;
+        var b22 = 101325.0 * Math.pow((b6 + 273.15)/((b6 + 273.15)+(-0.0065 * b4)), _envF1) * 0.00750062;
+        _b24 = (-174.1448622 + 1.0899959 * b22 + -1.5119 * 0.001 * Math.pow(b22, 2) + 0.72674 * Math.pow(10, -6) * Math.pow(b22, 3)) / 100.0;
+        _b7 = (Prop.getValue("envCurrTmp") as Number).toFloat();
+        _b9 = (Prop.getValue("envCurrHum") as Number).toFloat();
+
+        var b8 = (Prop.getValue("envTestHum") as Number).toFloat();
+        var b34 = Math.ln( b8 / 100.0 * Math.pow(Math.E, (18.678 - b6/234.5)*( b6/(257.14+ b6))));
+        var b36 = (257.14 * b34 / (18.678-b34)) * 1.8 + 32; 
+        _b38 = (b36+b6*1.8+32) > 100 ? 0.001341 * Math.pow((b36+b6*1.8+32), 2) -0.249517 * Math.pow((b36+b6*1.8+32), 1) + 11.699986 : 0.0;
+
+        var b35 = Math.ln(_b9 / 100.0 * Math.pow(Math.E, (18.678 -_b7/234.5)*(_b7/(257.14+_b7))));
+        var b37 = (257.14 * b35 / (18.678-b35)) * 1.8 + 32;
+        _b39 = (b37+_b7*1.8+32) > 100 ? 0.001341 * Math.pow((b37+_b7*1.8+32), 2) -0.249517 * Math.pow((b37+_b7*1.8+32), 1) + 11.699986 : 0.0;
     }
 
     function compute(info as Activity.Info) as Void {     
@@ -56,7 +85,7 @@ class TnPowerDFView extends Ui.DataField {
             onWorkoutStepComplete();
         }
 
-        var context = new ComputeContext(_timer, _powerZones, _heartRateZones);
+        var context = new ComputeContext(_timer, _powerZones, _heartRateZones, computeEnvCorrection(info));
 
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].compute(info, context);
@@ -65,6 +94,23 @@ class TnPowerDFView extends Ui.DataField {
 
     private function computePowerZone(ftp as Number, perc as Number) {
         return Math.round(ftp * perc / 100.0).toNumber();
+    }
+
+    private function computeEnvCorrection(info as Activity.Info) as Float {
+        if (_useEnvCorrection) {
+            var b5 = info.altitude != null && _useAltSensor ? info.altitude : (Prop.getValue("envCurrAlt") as Number).toFloat();
+            var b23 = 101325 * Math.pow((_b7 + 273.15)/((_b7 + 273.15)+(-0.0065 * b5)), _envF1) * 0.00750062;
+            var b25 = (-174.1448622 + 1.0899959 * b23 + -1.5119*0.001 * Math.pow(b23, 2) + 0.72674 * Math.pow(10, -6) * Math.pow(b23, 3)) / 100;
+            var r = 1.0 - (_b24 - b25) - (_b39 - _b38) / 100.0;
+            /*
+            System.println(Lang.format("env correction = $1$, alt $2$ -> $3$, temp $4$ -> $5$, humidity $6$ -> $7$", [
+                r, Prop.getValue("envTestAlt"), b5.toNumber(), Prop.getValue("envTestTmp"), Prop.getValue("envCurrTmp"),
+                Prop.getValue("envTestHum"), Prop.getValue("envCurrHum")
+            ]));
+            */
+            return r;
+        }
+        return 1.0;
     }
 
     function onWorkoutStarted() as Void {

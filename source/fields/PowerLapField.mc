@@ -21,7 +21,7 @@ class PowerLapField extends Field {
         Field.compute(info, context);
         if (context.timer != null) {
             if (context.timer != _prevTimer && info.currentPower != null) {
-                _powerSum += info.currentPower;
+                _powerSum += Math.round(info.currentPower / context.envCorrection).toNumber();
                 _powerCount ++;
             }
             _prevTimer = context.timer;
@@ -34,7 +34,7 @@ class PowerLapField extends Field {
             _label = zone == null ? LBL : LBL + " " + zone;
             setZone(zone);
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
-                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0, Prop.getValue("altertType") == 1, context);
+                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0, Prop.getValue("altertType") == 1, context       );
             } else {
                 clearAlert();
             }

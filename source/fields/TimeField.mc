@@ -59,8 +59,8 @@ class TimeField extends Field {
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
         var w2 = w / 2;
         var fw2 = Math.round(w * 0.35).toNumber();
-        var fw1 = Math.round((w2 - fw2 / 2) * 0.75);
-        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.025);
+        var fw1 = Math.round((w2 - fw2 / 2) * 0.7);
+        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.015);
 
         if (_remValuePerc != null) {
             var sw2 = dc.getWidth() / 2;
@@ -90,10 +90,16 @@ class TimeField extends Field {
 
         dc.setColor(_valueMutedColor, Graphics.COLOR_TRANSPARENT);
         var fi = getFontIdx(dc, _time, fw1);
+        if (fi == 0) {
+            fi++;
+        }
         var fyo = (_fontHeights[fi] * pf).toNumber();
         dc.drawText(x + xo + fw1, y - fyo, _fonts[fi], _time, Graphics.TEXT_JUSTIFY_RIGHT);
 
         fi = getFontIdx(dc, _elapsedTime, fw1);
+        if (fi == 0) {
+            fi++;
+        }
         fyo = (_fontHeights[fi] * pf).toNumber();
         dc.drawText(x + w - fw1 - xo, y - fyo, _fonts[fi], _elapsedTime, Graphics.TEXT_JUSTIFY_LEFT);
 

@@ -23,7 +23,7 @@ class PowerField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
-        _power = info.currentPower;
+        _power = info.currentPower == null ? null : Math.round(info.currentPower / context.envCorrection).toNumber();
         _almostFinish = _workout != null && _workout.almostFinishTime != null && context.timer >= _workout.almostFinishTime;
         if (_power == null) {
             _label = LBL;
@@ -46,8 +46,8 @@ class PowerField extends Field {
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
         var w2 = w / 2;
         var fw2 = Math.round(w * 0.35).toNumber();
-        var fw1 = Math.round((w2 - fw2 / 2) * 0.6);
-        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.025);
+        var fw1 = Math.round((w2 - fw2 / 2) * 0.58);
+        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.02);
 
         drawLabel(dc, x + w2, y + h - _fontHeights[0] - _lblFontHieght - _valueYPadding, x + w2 - fw2 / 2);
 
@@ -104,9 +104,15 @@ class PowerField extends Field {
 
         if (lo != "") {
             var fi = getFontIdx(dc, lo, fw1);
+            if (fi == 0) {
+                fi++;
+            }
             dc.drawText(x + xo + fw1, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], lo, Graphics.TEXT_JUSTIFY_RIGHT);
 
             fi = getFontIdx(dc, hi, fw1);
+            if (fi == 0) {
+                fi++;
+            }
             dc.drawText(x + w - fw1 - xo, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], hi, Graphics.TEXT_JUSTIFY_LEFT);
         }
 

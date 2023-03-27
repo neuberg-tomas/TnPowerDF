@@ -15,7 +15,7 @@ class PowerAvgField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
-        var v = info.averagePower;
+        var v = info.averagePower == null ? null : Math.round(info.averagePower / context.envCorrection).toNumber();
         if (v == null) {
             _value = NO_VALUE;
             _label = LBL;

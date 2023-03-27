@@ -9,7 +9,7 @@
         <property id="labelYPadding" type="number">2</property>
 
         <property id="valueColor" type="number">0x000000</property>
-        <property id="valueMutedColor" type="number">0x555555</property>
+        <property id="valueMutedColor" type="number">0x000000</property>
         <property id="valueLoColor" type="number">0xFF0000</property>
         <property id="valueHiColor" type="number">0xFF00FF</property>
         <property id="valueYPadding" type="number">5</property>
@@ -36,5 +36,14 @@
         <property id="altertDelaySecMin" type="number">5</property>
         <property id="altertDelaySecMax" type="number">60</property>
         <property id="altertDelayMultiplier" type="float">1.5</property>
+
+        <property id="envCorrection" type="boolean">true</property>
+        <property id="envCurrAltSensor" type="boolean">true</property>
+        <property id="envTestTmp" type="number">15</property>
+        <property id="envTestHum" type="number">70</property>
+        <property id="envTestAlt" type="number">200</property>
+        <property id="envCurrTmp" type="number">15</property>
+        <property id="envCurrHum" type="number">70</property>
+        <property id="envCurrAlt" type="number">200</property>
     </properties>
 </resources>
