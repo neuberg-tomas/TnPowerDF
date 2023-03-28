@@ -25,6 +25,7 @@ class HRField extends Field {
         } else {
             _value = NO_VALUE;
             _label = LBL;
+            setZone(null);
         }
     }
 

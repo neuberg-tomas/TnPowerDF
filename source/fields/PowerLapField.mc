@@ -41,6 +41,7 @@ class PowerLapField extends Field {
 
         } else {
             _value = NO_VALUE;
+            setZone(null);
             clearAlert();
         }
     }

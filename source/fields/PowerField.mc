@@ -49,7 +49,7 @@ class PowerField extends Field {
         var fw1 = Math.round((w2 - fw2 / 2) * 0.58);
         var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.02);
 
-        drawLabel(dc, x + w2, y + h - _fontHeights[0] - _lblFontHieght - _valueYPadding, x + w2 - fw2 / 2);
+        drawLabel(dc, x + w2, y + h - _fontHeights[0] - _lblFontHieght - _valueYPadding, x + w2 - fw2 / 2, fw2);
 
         var lo = "", hi = "";
 

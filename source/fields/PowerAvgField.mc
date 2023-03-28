@@ -17,6 +17,7 @@ class PowerAvgField extends Field {
         Field.compute(info, context);
         var v = info.averagePower == null ? null : Math.round(info.averagePower / context.envCorrection).toNumber();
         if (v == null) {
+            setZone(null);
             _value = NO_VALUE;
             _label = LBL;
         } else {

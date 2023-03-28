@@ -81,7 +81,7 @@ class TnPowerDFView extends Ui.DataField {
             _timer += 1000;
         }
 
-        if (_workout != null && _workout.isSet() && Activity.getCurrentWorkoutStep() == null) {
+        if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {
             onWorkoutStepComplete();
         }
 
@@ -121,13 +121,31 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onWorkoutStepComplete() as Void {
-        _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+        _workout = getNextWorkout();
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
         }
     }
 
+    private function getNextWorkout() {
+        var step = Activity.getCurrentWorkoutStep();
+        if (step == null) {
+            if (_workout != null && Prop.getValue("useLastStepTarget")) {
+                return new WorkoutInfo(_timer, null, null).setStaticPowerTarget(_workout.stepLo, _workout.stepHi);
+            }
+            if (Prop.getValue("useStaticTarget")) {                 
+                return new WorkoutInfo(_timer, null, null).setStaticPowerTarget(
+                    Prop.getValue("staticTargetLo") as Number, Prop.getValue("staticTargetHi") as Number
+                );
+            }
+        }
+        return new WorkoutInfo(_timer, step, Activity.getNextWorkoutStep());
+    }
+
     function onTimerLap() as Void {
+        if (_workout != null && _workout.isStatic()) {
+            _workout.stepStartTime = _timer;
+        }
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onLap();
         }
@@ -136,7 +154,17 @@ class TnPowerDFView extends Ui.DataField {
     function onTimerStart() as Void {
         _timer = 0;
         _timerActive = true;
-        for (var i = 0; i < _fields.size(); i++) {
+
+        if ((_workout == null || !_workout.isSet()) && Prop.getValue("useStaticTarget")) {
+            _workout = new WorkoutInfo(_timer, null, null).setStaticPowerTarget(
+                    Prop.getValue("staticTargetLo") as Number, Prop.getValue("staticTargetHi") as Number
+                );
+            for (var i = 0; i < _fields.size(); i++) {
+                _fields[i].onWorkoutStep(_workout);
+            }
+        }
+
+            for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onStart();
         }
     }
@@ -177,7 +205,7 @@ class TnPowerDFView extends Ui.DataField {
         dc.drawLine(w - w1, h1, w - w1, h3);
 
         var fw1 = w - 2 * wo - 1;
-        var fw2_1 = w1 - wo - 1;
+        var fw2_1 = w1 - wo;
         var fw2_2 = w - w1 * 2 - 1;
         var fh1 = h1 - 1;
         var fh2 = h2 - h1 - 1;

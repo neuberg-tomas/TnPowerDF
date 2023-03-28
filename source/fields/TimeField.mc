@@ -84,7 +84,7 @@ class TimeField extends Field {
         }
 
         dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + w2, y + _fontHeights[0] + _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x + w2, y + _fontHeights[0], Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
 
         var pf = 0.1;
 

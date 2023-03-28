@@ -45,5 +45,10 @@
         <property id="envCurrTmp" type="number">15</property>
         <property id="envCurrHum" type="number">70</property>
         <property id="envCurrAlt" type="number">200</property>
+
+        <property id="useStaticTarget" type="boolean">true</property>
+        <property id="useLastStepTarget" type="boolean">true</property>
+        <property id="staticTargetLo" type="number">220</property>
+        <property id="staticTargetHi" type="number">255</property>
     </properties>
 </resources>
