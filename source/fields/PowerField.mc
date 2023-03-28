@@ -36,7 +36,7 @@ class PowerField extends Field {
             setZone(zone);
             _label = zone == null ? LBL : LBL + " " + zone;
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
-                setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0, Prop.getValue("altertType") == 2, context);
+                setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0, Prop.getValue("alertType") == 2, context);
             } else {
                 clearAlert();
             }

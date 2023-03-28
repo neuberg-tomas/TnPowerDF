@@ -29,13 +29,10 @@
         <property id="powerZone3PercMax" type="number">100</property>
         <property id="powerZone4PercMax" type="number">115</property>
 
-        <property id="powerTargetLo" type="number">210</property>
-        <property id="powerTargetHi" type="number">250</property>
-
-        <property id="altertType" type="number">1</property> <!-- 0 = off, 1 = lap pwr, 2 = curr pwr -->
-        <property id="altertDelaySecMin" type="number">5</property>
-        <property id="altertDelaySecMax" type="number">60</property>
-        <property id="altertDelayMultiplier" type="float">1.5</property>
+        <property id="alertType" type="number">1</property> <!-- 0 = off, 1 = lap pwr, 2 = curr pwr -->
+        <property id="alertDelaySecMin" type="number">5</property>
+        <property id="alertDelaySecMax" type="number">45</property>
+        <property id="alertDelayMultiplier" type="float">1.4</property>
 
         <property id="envCorrection" type="boolean">true</property>
         <property id="envCurrAltSensor" type="boolean">true</property>
@@ -51,4 +48,90 @@
         <property id="staticTargetLo" type="number">220</property>
         <property id="staticTargetHi" type="number">255</property>
     </properties>
+
+    <settings>
+       <setting propertyKey="@Properties.envCorrection" title="@Strings.settingEnvCorrection">
+            <settingConfig type="boolean" />
+        </setting>
+        <group id="grpEnvCorrectionsCurr" enableIfTrue="@Properties.envCorrection" title="@Strings.grpEnvCorrectionsCurr">
+            <setting propertyKey="@Properties.envCurrTmp" title="@Strings.settingEnvTmp">
+                <settingConfig type="numeric" required="true" min="-20" max="50" errorMessage="@Strings.settingErrorEnvTmp" />
+            </setting>
+            <setting propertyKey="@Properties.envCurrHum" title="@Strings.settingEnvHum">
+                <settingConfig type="numeric" required="true" min="10" max="100" errorMessage="@Strings.settingErrorEnvHum" />
+            </setting>
+            <setting propertyKey="@Properties.envCurrAlt" title="@Strings.settingEnvAlt">
+                <settingConfig type="numeric" required="true" min="-100" max="8000" errorMessage="@Strings.settingErrorEnvAlt" />
+            </setting>
+            <setting propertyKey="@Properties.envCurrAltSensor" title="@Strings.settingEnvCurrAltSensor">
+                <settingConfig type="boolean" />
+            </setting>
+        </group>
+        <group id="grpEnvCorrectionsTest" enableIfTrue="@Properties.envCorrection" title="@Strings.grpEnvCorrectionsTest">
+            <setting propertyKey="@Properties.envTestTmp" title="@Strings.settingEnvTmp">
+                <settingConfig type="numeric" required="true" min="-20" max="50" errorMessage="@Strings.settingErrorEnvTmp" />
+            </setting>
+            <setting propertyKey="@Properties.envTestHum" title="@Strings.settingEnvHum">
+                <settingConfig type="numeric" required="true" min="10" max="100" errorMessage="@Strings.settingErrorEnvHum" />
+            </setting>
+            <setting propertyKey="@Properties.envTestAlt" title="@Strings.settingEnvAlt">
+                <settingConfig type="numeric" required="true" min="-100" max="8000" errorMessage="@Strings.settingErrorEnvAlt" />
+            </setting>
+        </group>
+
+        <group id="grpPowerZones" title="@Strings.grpPowerZones">
+            <setting propertyKey="@Properties.ftp" title="@Strings.settingFTP">
+                <settingConfig type="numeric" required="true" min="0" max="999" errorMessage="@Strings.settingErrorEnvPwr" />
+            </setting>
+            <setting propertyKey="@Properties.powerZone1PercMin" title="@Strings.settingPowerZone1PercMin">
+                <settingConfig type="numeric" required="true" min="0" max="500" errorMessage="@Strings.settingErrorEnvZonePerc" />
+            </setting>
+            <setting propertyKey="@Properties.powerZone1PercMax" title="@Strings.settingPowerZone1PercMax">
+                <settingConfig type="numeric" required="true" min="0" max="500" errorMessage="@Strings.settingErrorEnvZonePerc" />
+            </setting>
+            <setting propertyKey="@Properties.powerZone2PercMax" title="@Strings.settingPowerZone2PercMax">
+                <settingConfig type="numeric" required="true" min="0" max="500" errorMessage="@Strings.settingErrorEnvZonePerc" />
+            </setting>
+            <setting propertyKey="@Properties.powerZone3PercMax" title="@Strings.settingPowerZone3PercMax">
+                <settingConfig type="numeric" required="true" min="0" max="500" errorMessage="@Strings.settingErrorEnvZonePerc" />
+            </setting>
+            <setting propertyKey="@Properties.powerZone4PercMax" title="@Strings.settingPowerZone4PercMax">
+                <settingConfig type="numeric" required="true" min="0" max="500" errorMessage="@Strings.settingErrorEnvZonePerc" />
+            </setting>
+        </group>
+
+        <group id="grpStaticTarget" title="@Strings.grpStaticTarget">
+            <setting propertyKey="@Properties.useStaticTarget" title="@Strings.settingUseStaticTarget">
+                <settingConfig type="boolean" />
+            </setting>
+           <setting propertyKey="@Properties.useLastStepTarget" title="@Strings.settingUseLastStepTarget">
+                <settingConfig type="boolean" />
+            </setting>
+            <setting propertyKey="@Properties.staticTargetLo" title="@Strings.settingStaticTargetLo">
+                <settingConfig type="numeric" required="true" min="0" max="999" errorMessage="@Strings.settingErrorEnvPwr" />
+            </setting>
+            <setting propertyKey="@Properties.staticTargetHi" title="@Strings.settingStaticTargetHi">
+                <settingConfig type="numeric" required="true" min="0" max="999" errorMessage="@Strings.settingErrorEnvPwr" />
+            </setting>
+        </group>
+
+        <group id="grpAlert" title="@Strings.grpAlert">
+            <setting propertyKey="@Properties.alertType" title="@Strings.settingAlertType">
+                <settingConfig type="list" required="true">
+                    <listEntry value="0">@Strings.settingAlertType0</listEntry>
+                    <listEntry value="1">@Strings.settingAlertType1</listEntry>
+                    <listEntry value="2">@Strings.settingAlertType2</listEntry>
+                </settingConfig>
+            </setting>
+            <setting propertyKey="@Properties.alertDelaySecMin" title="@Strings.settingAlertDelaySecMin">
+                <settingConfig type="numeric" required="true" min="5" max="600" errorMessage="@Strings.settingErrorDelay" />
+            </setting>
+            <setting propertyKey="@Properties.alertDelaySecMax" title="@Strings.settingAlertDelaySecMax">
+                <settingConfig type="numeric" required="true" min="5" max="600" errorMessage="@Strings.settingErrorDelay" />
+            </setting>
+            <setting propertyKey="@Properties.alertDelayMultiplier" title="@Strings.settingAlertDelayMultiplier">
+                <settingConfig type="numeric" required="true" min="1" max="5" errorMessage="@Strings.settingErrorMultiplier" />
+            </setting>
+        </group>
+    </settings>
 </resources>

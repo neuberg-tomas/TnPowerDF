@@ -104,7 +104,7 @@ class Field {
                     _valueColor = Properties.getValue("valueColor") as Number;
                     break;
             }
-            _alertDelay = Properties.getValue("altertDelaySecMin") as Number;
+            _alertDelay = Properties.getValue("alertDelaySecMin") as Number;
             _alertNextPlay = 0;
         }
         if (sound && alert > 0 && context != null && context.timer != null && context.timer >= _alertNextPlay) {
@@ -125,8 +125,8 @@ class Field {
             ]);
         }
         _alertNextPlay = timer + _alertDelay * 1000;
-        _alertDelay = (_alertDelay * (Properties.getValue("altertDelayMultiplier") as Float)).toNumber();
-        var max = Properties.getValue("altertDelaySecMax") as Number;
+        _alertDelay = (_alertDelay * (Properties.getValue("alertDelayMultiplier") as Float)).toNumber();
+        var max = Properties.getValue("alertDelaySecMax") as Number;
         if (_alertDelay > max) {
             _alertDelay = max;
         }

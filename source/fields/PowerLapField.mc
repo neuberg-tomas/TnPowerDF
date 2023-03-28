@@ -34,7 +34,7 @@ class PowerLapField extends Field {
             _label = zone == null ? LBL : LBL + " " + zone;
             setZone(zone);
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
-                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0, Prop.getValue("altertType") == 1, context       );
+                setAlert(v < _workout.stepLo ? 1 : v > _workout.stepHi ? 2 : 0, Prop.getValue("alertType") == 1, context       );
             } else {
                 clearAlert();
             }

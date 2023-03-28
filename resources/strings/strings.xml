@@ -1,3 +1,44 @@
 <strings>
     <string id="AppName">TnPowerDF</string>
+
+    <string id="settingErrorEnvTmp">Temparature must be number from range [-20, 50]</string>
+    <string id="settingErrorEnvHum">Humidity must be number from range [10, 100]</string>
+    <string id="settingErrorEnvAlt">Altitude must be number from range [-100, 8000]</string>
+    <string id="settingErrorEnvPwr">Power must be number from range [0, 999]</string>
+    <string id="settingErrorEnvZonePerc">% must be number from range [0, 500]</string>
+
+    <string id="settingEnvCorrection">Apply environmental correction</string>
+    <string id="grpEnvCorrectionsCurr">Actual environment</string>
+    <string id="grpEnvCorrectionsTest">CP test environment</string>
+    <string id="settingEnvCurrAltSensor">Use sensor for altitude</string>    
+    <string id="settingEnvTmp">Temperature (°C)</string>
+    <string id="settingEnvHum">Humidity (%)</string>
+    <string id="settingEnvAlt">Altitude (m)</string>
+    
+    <string id="grpStaticTarget">Static target</string>
+    <string id="settingUseStaticTarget">Active</string>
+    <string id="settingUseLastStepTarget">Last step</string>
+    <string id="settingStaticTargetLo">Lower</string>
+    <string id="settingStaticTargetHi">Upper</string>
+
+    <string id="grpPowerZones">Power zones</string>
+    <string id="settingFTP">CP (W)</string>
+    <string id="settingPowerZone1PercMin">Zone 1 min (%)</string>
+    <string id="settingPowerZone1PercMax">Zone 1 max (%)</string>
+    <string id="settingPowerZone2PercMax">Zone 2 max (%)</string>
+    <string id="settingPowerZone3PercMax">Zone 3 max (%)</string>
+    <string id="settingPowerZone4PercMax">Zone 4 max (%)</string>
+
+    <string id="grpAlert">Alert</string>
+    <string id="settingAlertType">Type</string>
+    <string id="settingAlertType0">Disabled</string>
+    <string id="settingAlertType1">Lap power</string>
+    <string id="settingAlertType2">Current power</string>
+    <string id="settingAlertDelaySecMin">Min delay (s)</string>
+    <string id="settingAlertDelaySecMax">Max delay (s)</string>
+    <string id="settingAlertDelayMultiplier">Delay multiplier</string>
+
+    <string id="settingErrorDelay">Delay must be number from range [5, 600]</string>
+    <string id="settingErrorMultiplier">Multiplier must be number from range [1.0, 5.0]</string>
+
 </strings>
