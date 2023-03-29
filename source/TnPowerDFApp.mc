@@ -21,6 +21,9 @@ class TnPowerDFApp extends Application.AppBase {
         return [ new TnPowerDFView() ] as Array<Views or InputDelegates>;
     }
 
+    function getSettingsView() as Array<Views or InputDelegates>? {
+        return [ new SettingsMenu(), new SettingsMenuDelegate() ] as Array<Views or InputDelegates>;
+    }
 }
 
 function getApp() as TnPowerDFApp {

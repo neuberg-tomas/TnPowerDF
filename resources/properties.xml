@@ -1,6 +1,6 @@
 <resources>
     <properties>
-        <property id="appVersion" type="string">1.0.0</property>
+        <property id="appVersion" type="string">0.8</property>
 
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>
@@ -32,7 +32,7 @@
         <property id="alertType" type="number">1</property> <!-- 0 = off, 1 = lap pwr, 2 = curr pwr -->
         <property id="alertDelaySecMin" type="number">5</property>
         <property id="alertDelaySecMax" type="number">45</property>
-        <property id="alertDelayMultiplier" type="float">1.4</property>
+        <property id="alertDelayMultiplier" type="number">40</property>
 
         <property id="envCorrection" type="boolean">true</property>
         <property id="envCurrAltSensor" type="boolean">true</property>
@@ -130,8 +130,12 @@
                 <settingConfig type="numeric" required="true" min="5" max="600" errorMessage="@Strings.settingErrorDelay" />
             </setting>
             <setting propertyKey="@Properties.alertDelayMultiplier" title="@Strings.settingAlertDelayMultiplier">
-                <settingConfig type="numeric" required="true" min="1" max="5" errorMessage="@Strings.settingErrorMultiplier" />
+                <settingConfig type="numeric" required="true" min="0" max="100" errorMessage="@Strings.settingErrorMultiplier" />
             </setting>
         </group>
+
+        <setting propertyKey="@Properties.appVersion" title="Version">
+            <settingConfig type="alphanumeric" readonly="true" />
+        </setting>
     </settings>
 </resources>

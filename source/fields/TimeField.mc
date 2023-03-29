@@ -12,12 +12,11 @@ class TimeField extends Field {
 
     private var _elapsedTime as String = "";
     private var _time as String = "";
-    private var _valueMutedColor as Number;
+    private const _valueMutedColor as Number = Prop.getValue("valueMutedColor") as Number;
     private var _remValuePerc as Number?;
 
     function initialize() {
         Field.initialize(LBL_LAP);
-        _valueMutedColor = Prop.getValue("valueMutedColor") as Number;
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
@@ -57,6 +56,11 @@ class TimeField extends Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
+        if (_fontHeights == null || _fontHeights[0] == null) {
+            System.println(_label + ".draw: _fontHeights: " + _fontHeights);
+            return;
+        }
+
         var w2 = w / 2;
         var fw2 = Math.round(w * 0.35).toNumber();
         var fw1 = Math.round((w2 - fw2 / 2) * 0.7);

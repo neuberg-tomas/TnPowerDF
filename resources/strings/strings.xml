@@ -36,9 +36,9 @@
     <string id="settingAlertType2">Current power</string>
     <string id="settingAlertDelaySecMin">Min delay (s)</string>
     <string id="settingAlertDelaySecMax">Max delay (s)</string>
-    <string id="settingAlertDelayMultiplier">Delay multiplier</string>
+    <string id="settingAlertDelayMultiplier">Delay increase (%)</string>
 
     <string id="settingErrorDelay">Delay must be number from range [5, 600]</string>
-    <string id="settingErrorMultiplier">Multiplier must be number from range [1.0, 5.0]</string>
+    <string id="settingErrorMultiplier">Must be number from range [0, 100]</string>
 
 </strings>

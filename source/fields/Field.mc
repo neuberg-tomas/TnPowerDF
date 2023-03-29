@@ -11,37 +11,31 @@ class Field {
     protected const NO_VALUE = "---";
     protected var _value as String = NO_VALUE;
     protected var _label as String = "";
-    protected var _fonts as Array<Resource>;
-    protected var _fontHeights as Array<Number>;
-    protected var _lblFontHieght as Number;
-    protected var _lblColor as Number;
-    protected var _lblYPadding as Number;
-    protected var _valueYPadding as Number;
+    protected const _fonts as Array<Resource> = [
+        WatchUi.loadResource(Rez.Fonts.NumNormal), 
+        WatchUi.loadResource(Rez.Fonts.NumMedium), 
+        WatchUi.loadResource(Rez.Fonts.NumSmall)
+        ] as Array<Resource>;
+    protected const _fontHeights as Array<Number> = [
+        Graphics.getFontHeight(_fonts[0]) - Graphics.getFontDescent(_fonts[0]),
+        Graphics.getFontHeight(_fonts[1]) - Graphics.getFontDescent(_fonts[1]),
+        Graphics.getFontHeight(_fonts[2]) - Graphics.getFontDescent(_fonts[2])
+    ] as Array<Number>;
+    protected const _lblFontHieght as Number = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
+    protected const _lblColor as Number = Properties.getValue("labelColor") as Number;
+    protected const _lblYPadding as Number = Properties.getValue("labelYPadding") as Number;
+    protected const _valueYPadding as Number = Properties.getValue("valueYPadding") as Number;
     protected var _workout as WorkoutInfo?;
     protected var _zone as Number?;
     protected var _zoneColor as Number?;
-    protected var _zoneColorAsBg as Boolean;
+    protected const _zoneColorAsBg as Boolean = Properties.getValue("zoneColorAsBg") as Boolean;
     protected var _alert as Number = 0;
-    protected var _valueColor as Number;
+    protected var _valueColor as Number = Properties.getValue("valueColor") as Number;
     private var   _alertDelay as Number = 0;
     private var   _alertNextPlay as Number = 0;
 
     function initialize(label as String) {
         _label = label;
-
-        var fonts = [Rez.Fonts.NumNormal, Rez.Fonts.NumMedium, Rez.Fonts.NumSmall];
-        _fonts = new Array<Resource>[fonts.size()];
-        _fontHeights = new Array<Number>[fonts.size()];
-        for (var i = 0; i < fonts.size(); i++) {
-            _fonts[i] = WatchUi.loadResource(fonts[i]);
-            _fontHeights[i] = Graphics.getFontHeight(_fonts[i]) - Graphics.getFontDescent(_fonts[i]);
-        }
-        _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
-        _lblColor = Properties.getValue("labelColor") as Number;
-        _valueColor = Properties.getValue("valueColor") as Number;
-        _lblYPadding = Properties.getValue("labelYPadding") as Number;
-        _valueYPadding = Properties.getValue("valueYPadding") as Number;
-        _zoneColorAsBg = Properties.getValue("zoneColorAsBg") as Boolean;
     }
 
     function onLayout(dc as Dc) as Void {
@@ -109,23 +103,36 @@ class Field {
         }
         if (sound && alert > 0 && context != null && context.timer != null && context.timer >= _alertNextPlay) {
             playAlert(context.timer);
+        } else if (sound && alert == 0) {
+            Attention.playTone({:toneProfile => [
+                new ToneProfile(400,  500),
+                new ToneProfile(0,  500)
+            ], :repeatCount => 2});
         }
     }
 
     private function playAlert(timer as Number) {
         if (_alert == 1) {
-            Attention.playTone(Attention.TONE_ALERT_LO);
+            Attention.playTone({:toneProfile=>[
+                new ToneProfile(400,  500),
+                new ToneProfile(800,  500),
+                new ToneProfile(1200, 500)
+            ]});
             Attention.vibrate([
                 new VibeProfile(100, 1000), new VibeProfile(0, 750), new VibeProfile(100, 1000)
             ]);
         } else if (_alert == 2) {
-            Attention.playTone(Attention.TONE_ALERT_HI);
+            Attention.playTone({:toneProfile=>[
+                new ToneProfile(1200,  500),
+                new ToneProfile(800,  500),
+                new ToneProfile(400, 500)
+            ]});
             Attention.vibrate([
                 new VibeProfile(100, 1500)
             ]);
         }
         _alertNextPlay = timer + _alertDelay * 1000;
-        _alertDelay = (_alertDelay * (Properties.getValue("alertDelayMultiplier") as Float)).toNumber();
+        _alertDelay = (_alertDelay * ((Properties.getValue("alertDelayMultiplier") as Number) / 100.0 + 1.0)).toNumber();
         var max = Properties.getValue("alertDelaySecMax") as Number;
         if (_alertDelay > max) {
             _alertDelay = max;
@@ -133,6 +140,10 @@ class Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
+        if (_lblColor == null) {
+            System.println(_label + ".draw: _lblColor is null !!!");
+            return;
+        }
         drawLabel(dc, x + w / 2, y, x, w);
 
         dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
