@@ -100,32 +100,34 @@ class Field {
             }
             _alertDelay = Properties.getValue("alertDelaySecMin") as Number;
             _alertNextPlay = 0;
+
+            if (sound && alert == 0) {
+               Attention.playTone({:toneProfile => [
+                    new ToneProfile(400,  500),
+                    new ToneProfile(0,  300)
+                ], :repeatCount => 2});
+            }
         }
         if (sound && alert > 0 && context != null && context.timer != null && context.timer >= _alertNextPlay) {
             playAlert(context.timer);
-        } else if (sound && alert == 0) {
-            Attention.playTone({:toneProfile => [
-                new ToneProfile(400,  500),
-                new ToneProfile(0,  500)
-            ], :repeatCount => 2});
         }
     }
 
     private function playAlert(timer as Number) {
         if (_alert == 1) {
             Attention.playTone({:toneProfile=>[
-                new ToneProfile(400,  500),
-                new ToneProfile(800,  500),
-                new ToneProfile(1200, 500)
+                new ToneProfile(400,  400),
+                new ToneProfile(900,  400),
+                new ToneProfile(1400, 400)
             ]});
             Attention.vibrate([
                 new VibeProfile(100, 1000), new VibeProfile(0, 750), new VibeProfile(100, 1000)
             ]);
         } else if (_alert == 2) {
             Attention.playTone({:toneProfile=>[
-                new ToneProfile(1200,  500),
-                new ToneProfile(800,  500),
-                new ToneProfile(400, 500)
+                new ToneProfile(1400,  400),
+                new ToneProfile(900,  400),
+                new ToneProfile(400, 400)
             ]});
             Attention.vibrate([
                 new VibeProfile(100, 1500)

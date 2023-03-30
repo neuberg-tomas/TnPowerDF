@@ -9,7 +9,7 @@ class PowerLapField extends Field {
 
     const LBL = "Lap Pwr";
 
-    private var _powerSum as Long = 0l;
+    private var _powerSum as Double = 0d;
     private var _powerCount as Number = 0;
     private var _prevTimer as Number = -1;
 
@@ -21,7 +21,7 @@ class PowerLapField extends Field {
         Field.compute(info, context);
         if (context.timer != null) {
             if (context.timer != _prevTimer && info.currentPower != null) {
-                _powerSum += Math.round(info.currentPower / context.envCorrection).toNumber();
+                _powerSum += info.currentPower / context.envCorrection;
                 _powerCount ++;
             }
             _prevTimer = context.timer;
@@ -57,7 +57,7 @@ class PowerLapField extends Field {
     }
 
     private function reset() as Void {
-        _powerSum = 0l;
+        _powerSum = 0d;
         _powerCount = 0;
     }
 }
