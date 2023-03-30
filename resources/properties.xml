@@ -1,6 +1,6 @@
 <resources>
     <properties>
-        <property id="appVersion" type="string">0.8</property>
+        <property id="appVersion" type="string">0.10</property>
 
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>

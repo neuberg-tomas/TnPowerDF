@@ -49,8 +49,6 @@ class PowerField extends Field {
 
         var w2 = w / 2;
         var fw2 = Math.round(w * 0.35).toNumber();
-        var fw1 = Math.round((w2 - fw2 / 2) * 0.58);
-        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.02);
 
         drawLabel(dc, x + w2, y + h - _fontHeights[0] - _lblFontHieght - _valueYPadding, x + w2 - fw2 / 2, fw2);
 
@@ -107,21 +105,24 @@ class PowerField extends Field {
 
 
         if (lo != "") {
-            var fi = getFontIdx(dc, lo, fw1);
-            if (fi == 0) {
-                fi++;
-            }
+            var fw1 = Math.round((w2 - fw2 / 2) * 0.82);
+            var fw1Top = (fw1 * 0.55).toNumber();
+            var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.016);
+
+            var fi = getFontIdx(dc, lo, fw1Top, fw1);
             dc.drawText(x + xo + fw1, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], lo, Graphics.TEXT_JUSTIFY_RIGHT);
 
-            fi = getFontIdx(dc, hi, fw1);
-            if (fi == 0) {
-                fi++;
-            }
+            fi = getFontIdx(dc, hi, fw1Top, fw1);
             dc.drawText(x + w - fw1 - xo, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], hi, Graphics.TEXT_JUSTIFY_LEFT);
+/*
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawLine(x + w - fw1 - xo, y + h - _fontHeights[0] - _valueYPadding, x + w - fw1 - xo + fw1Top, y + h - _fontHeights[0] - _valueYPadding);
+            dc.drawLine(x + w - fw1 - xo, y + h - _valueYPadding, x + w - fw1 - xo + fw1, y + h -_valueYPadding);
+*/
         }
 
         dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
-        var fi = getFontIdx(dc, _value, fw2);
+        var fi = getFontIdx(dc, _value, fw2, fw2);
         dc.drawText(x + w2, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], _value, Graphics.TEXT_JUSTIFY_CENTER);      
 
     }

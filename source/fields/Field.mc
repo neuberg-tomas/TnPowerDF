@@ -149,7 +149,7 @@ class Field {
         drawLabel(dc, x + w / 2, y, x, w);
 
         dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
-        var fontIdx = getFontIdx(dc, _value, w);
+        var fontIdx = getFontIdx(dc, _value, w, w);
         dc.drawText(x + w / 2, y + h - _fontHeights[fontIdx] - _valueYPadding, _fonts[fontIdx], _value, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
@@ -170,10 +170,29 @@ class Field {
         }
     }
 
-    protected function getFontIdx(dc as Dc, text as String, width as Number) {
-        for (var i = 0; i < _fonts.size(); i++) {
-            if (dc.getTextWidthInPixels(text, _fonts[i]) <= width) {
-                return i;
+    protected function getFontIdx(dc as Dc, text as String, width1 as Number, width2 as Number) {
+        if (width1 == width2) {
+            for (var i = 0; i < _fonts.size(); i++) {
+                if (dc.getTextWidthInPixels(text, _fonts[i]) <= width1) {
+                    return i;
+                }
+            }
+        } else {
+            var ws = width1;
+            var wd = width2 - width1;
+            if (wd < 0) {
+                wd = -wd;
+                ws = width2;
+            }
+            var fd = _fontHeights[0] - _fontHeights[_fontHeights.size() - 1];
+            var w = ws;
+            for (var i = 0; i < _fonts.size(); i++) {
+                if (i > 0) {
+                    w = ws + wd * (_fontHeights[0] - _fontHeights[i]) / fd;
+                }
+                if (dc.getTextWidthInPixels(text, _fonts[i]) <= w) {
+                    return i;
+                }
             }
         }
         return _fonts.size() - 1;

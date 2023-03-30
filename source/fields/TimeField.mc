@@ -63,8 +63,6 @@ class TimeField extends Field {
 
         var w2 = w / 2;
         var fw2 = Math.round(w * 0.35).toNumber();
-        var fw1 = Math.round((w2 - fw2 / 2) * 0.7);
-        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.015);
 
         if (_remValuePerc != null) {
             var sw2 = dc.getWidth() / 2;
@@ -92,23 +90,27 @@ class TimeField extends Field {
 
         var pf = 0.1;
 
+        var fw1 = Math.round((w2 - fw2 / 2) * 0.92);
+        var fw1Bottom = (fw1 * 0.55).toNumber();
+        var xo = w2 - fw2 / 2 - fw1 - Math.round(w * 0.016);
+
         dc.setColor(_valueMutedColor, Graphics.COLOR_TRANSPARENT);
-        var fi = getFontIdx(dc, _time, fw1);
-        if (fi == 0) {
-            fi++;
-        }
+        var fi = getFontIdx(dc, _time, fw1, fw1Bottom);
         var fyo = (_fontHeights[fi] * pf).toNumber();
         dc.drawText(x + xo + fw1, y - fyo, _fonts[fi], _time, Graphics.TEXT_JUSTIFY_RIGHT);
 
-        fi = getFontIdx(dc, _elapsedTime, fw1);
-        if (fi == 0) {
-            fi++;
-        }
+        fi = getFontIdx(dc, _elapsedTime, fw1, fw1Bottom);
         fyo = (_fontHeights[fi] * pf).toNumber();
         dc.drawText(x + w - fw1 - xo, y - fyo, _fonts[fi], _elapsedTime, Graphics.TEXT_JUSTIFY_LEFT);
 
+/*
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        fyo = (_fontHeights[0] * pf).toNumber();
+        dc.drawLine(x + w - fw1 - xo, y - fyo, x + w - fw1 - xo + fw1 , y - fyo);
+        dc.drawLine(x + w - fw1 - xo, y - fyo + _fontHeights[0], x + w - fw1 - xo + fw1Bottom , y - fyo + _fontHeights[0]);
+*/
         dc.setColor(_valueColor, Graphics.COLOR_TRANSPARENT);
-        fi = getFontIdx(dc, _value, fw2);
+        fi = getFontIdx(dc, _value, fw2, fw2);
         fyo = (_fontHeights[fi] * pf).toNumber();
         dc.drawText(x + w2, y - fyo, _fonts[fi], _value, Graphics.TEXT_JUSTIFY_CENTER);      
     }
