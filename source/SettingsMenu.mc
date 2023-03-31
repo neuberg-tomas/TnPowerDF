@@ -34,7 +34,7 @@ class SettingsMenu extends Menu2 {
         addItem(new ToggleMenuItem("Use last step target", null, :mnuUseLastStepTarget,
             Properties.getValue("useLastStepTarget"), opts));            
 
-        addItem(new MenuItem("Version", Properties.getValue("appVersion").toString(), :mnuVersion, opts));
+        addItem(new MenuItem(Rez.Strings.appVersion, null, :mnuVersion, opts));
     }
 }
 

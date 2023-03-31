@@ -1,7 +1,6 @@
 <resources>
     <properties>
-        <property id="appVersion" type="string">0.10</property>
-
+        <property id="dummy" type="string"/>
         <property id="colorBg" type="number">0xFFFFFF</property>
         <property id="colorLines" type="number">0x00AAFF</property>
         
@@ -134,7 +133,7 @@
             </setting>
         </group>
 
-        <setting propertyKey="@Properties.appVersion" title="Version">
+        <setting propertyKey="@Properties.dummy" title="@Strings.appVersion">
             <settingConfig type="alphanumeric" readonly="true" />
         </setting>
     </settings>

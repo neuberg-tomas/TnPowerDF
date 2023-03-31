@@ -9,33 +9,52 @@ using Toybox.Application.Properties;
 class Field {
 
     protected const NO_VALUE = "---";
-    protected var _value as String = NO_VALUE;
-    protected var _label as String = "";
-    protected const _fonts as Array<Resource> = [
-        WatchUi.loadResource(Rez.Fonts.NumNormal), 
-        WatchUi.loadResource(Rez.Fonts.NumMedium), 
-        WatchUi.loadResource(Rez.Fonts.NumSmall)
-        ] as Array<Resource>;
-    protected const _fontHeights as Array<Number> = [
-        Graphics.getFontHeight(_fonts[0]) - Graphics.getFontDescent(_fonts[0]),
-        Graphics.getFontHeight(_fonts[1]) - Graphics.getFontDescent(_fonts[1]),
-        Graphics.getFontHeight(_fonts[2]) - Graphics.getFontDescent(_fonts[2])
-    ] as Array<Number>;
-    protected const _lblFontHieght as Number = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
-    protected const _lblColor as Number = Properties.getValue("labelColor") as Number;
-    protected const _lblYPadding as Number = Properties.getValue("labelYPadding") as Number;
-    protected const _valueYPadding as Number = Properties.getValue("valueYPadding") as Number;
+    protected var _value;
+    protected var _label as String;
+    protected var _fonts as Array<Resource>;
+    protected var _fontHeights as Array<Number>;
+    protected var _lblFontHieght as Number;
+    protected var _lblColor as Number;
+    protected var _lblYPadding as Number;
+    protected var _valueYPadding as Number;
     protected var _workout as WorkoutInfo?;
     protected var _zone as Number?;
     protected var _zoneColor as Number?;
-    protected const _zoneColorAsBg as Boolean = Properties.getValue("zoneColorAsBg") as Boolean;
-    protected var _alert as Number = 0;
-    protected var _valueColor as Number = Properties.getValue("valueColor") as Number;
-    private var   _alertDelay as Number = 0;
-    private var   _alertNextPlay as Number = 0;
+    protected var _zoneColorAsBg as Boolean;
+    protected var _alert as Number;
+    protected var _valueColor as Number;
+    private var   _alertDelay as Number;
+    private var   _alertNextPlay as Number;
+    private var _initialized as Boolean?;
 
     function initialize(label as String) {
         _label = label;
+        _value = NO_VALUE;
+        
+        _fonts = [
+            WatchUi.loadResource(Rez.Fonts.NumNormal), 
+            WatchUi.loadResource(Rez.Fonts.NumMedium), 
+            WatchUi.loadResource(Rez.Fonts.NumSmall)
+        ] as Array<Resource>;
+        
+        _fontHeights  = new Array<Number>[_fonts.size()];
+        for (var i = 0; i < _fonts.size(); i++) {
+            _fontHeights[i] = Graphics.getFontHeight(_fonts[i]) - Graphics.getFontDescent(_fonts[i]);
+        }
+
+        _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
+        _lblColor = Properties.getValue("labelColor").toNumber();
+        _lblYPadding = Properties.getValue("labelYPadding").toNumber();
+        _valueYPadding = Properties.getValue("valueYPadding").toNumber();
+        _valueColor = Properties.getValue("valueColor") as Number;
+
+        _alert = 0;
+        _alertDelay = 0;
+        _alertNextPlay = 0;
+
+        _zoneColorAsBg = Properties.getValue("zoneColorAsBg") as Boolean;
+
+        _initialized = true;
     }
 
     function onLayout(dc as Dc) as Void {
@@ -142,8 +161,8 @@ class Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
-        if (_lblColor == null) {
-            System.println(_label + ".draw: _lblColor is null !!!");
+        if (_initialized == null) {
+            System.println(_label + ".draw: not initialized yet");
             return;
         }
         drawLabel(dc, x + w / 2, y, x, w);

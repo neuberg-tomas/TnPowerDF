@@ -36,6 +36,8 @@ class TnPowerDFView extends Ui.DataField {
     private const _useAltSensor as Boolean = Prop.getValue("envCurrAltSensor") as Boolean;
     private const _useEnvCorrection as Boolean = Prop.getValue("envCorrection") as Boolean;
 
+    private var _initialized as Boolean?;
+
     function initialize() {
         DataField.initialize();
 
@@ -73,22 +75,32 @@ class TnPowerDFView extends Ui.DataField {
         var b35 = Math.ln(_b9 / 100.0 * Math.pow(Math.E, (18.678 -_b7/234.5)*(_b7/(257.14+_b7))));
         var b37 = (257.14 * b35 / (18.678-b35)) * 1.8 + 32;
         _b39 = (b37+_b7*1.8+32) > 100 ? 0.001341 * Math.pow((b37+_b7*1.8+32), 2) -0.249517 * Math.pow((b37+_b7*1.8+32), 1) + 11.699986 : 0.0;
+
+        _initialized = true;
     }
 
     function compute(info as Activity.Info) as Void {     
-        if (_timerActive) {
-            _timer += 1000;
+        try {
+            if (_timerActive) {
+                _timer += 1000;
+            }
+
+            if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {
+                onWorkoutStepComplete();
+            }
+
+            var context = new ComputeContext(_timer, _powerZones, _heartRateZones, computeEnvCorrection(info));
+
+            for (var i = 0; i < _fields.size(); i++) {
+                try {
+                    _fields[i].compute(info, context);
+                } catch (ex) {
+                   System.println("field." + i + " compute exception: " + ex.getErrorMessage());
+                }
+            }   
+        } catch (ex) {
+            System.println("compute exception: " + ex.getErrorMessage());
         }
-
-        if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {
-            onWorkoutStepComplete();
-        }
-
-        var context = new ComputeContext(_timer, _powerZones, _heartRateZones, computeEnvCorrection(info));
-
-        for (var i = 0; i < _fields.size(); i++) {
-            _fields[i].compute(info, context);
-        }   
     }
 
     private function computePowerZone(ftp as Number, perc as Number) {
@@ -184,49 +196,85 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onUpdate(dc as Dc) as Void {
-        if (_lineColor == null) {
-            System.println("onUpdate: _lineColor=" + _lineColor);
-            return;
+        try {
+            if (_initialized == null) {
+                System.println("onUpdate: not initialized yet");
+                return;
+            }
+            dc.setColor(_lineColor, _bgColor);
+            dc.clear();
+
+            var w = dc.getWidth();
+            var h = dc.getHeight();
+
+            var h1 = (h / 4 * 1.1).toNumber();
+            var h2 = h / 2;
+            var h3 = h - h1;
+            var wo = Math.round(w * 0.05).toNumber();
+            var w1 = Math.round(w * 0.34).toNumber();
+
+            dc.setPenWidth(_lineWidth);
+            dc.drawLine(wo, h1, w - wo, h1);
+            dc.drawLine(0, h2, w, h2);
+            dc.drawLine(wo, h3, w - wo, h3);
+            dc.drawLine(w1, h1, w1, h3);
+            dc.drawLine(w - w1, h1, w - w1, h3);
+
+            var fw1 = w - 2 * wo - 1;
+            var fw2_1 = w1 - wo;
+            var fw2_2 = w - w1 * 2 - 1;
+            var fh1 = h1 - 1;
+            var fh2 = h2 - h1 - 1;
+
+            // top
+            try {
+                _fields[0].draw(dc, wo, 0, fw1, fh1);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+
+            // 1th row
+            try {
+                _fields[1].draw(dc, wo, h1 + 1, fw2_1, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+            try {
+                _fields[2].draw(dc, w1 + 1, h1 + 1, fw2_2, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+            try {
+                _fields[3].draw(dc, w - w1 + 1, h1 + 1, fw2_1, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+
+            // 2nd row
+            try {
+                _fields[4].draw(dc, wo, h2 + 1, fw2_1, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+            try {
+                _fields[5].draw(dc, w1 + 1, h2 + 1, fw2_2, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+            try {
+                _fields[6].draw(dc, w - w1 + 1, h2 + 1, fw2_1, fh2);
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+
+            // bottom
+            try {
+                _fields[7].draw(dc, wo, h3 + 1, fw1, fh1);            
+            } catch (ex) {
+               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+            }
+        } catch (ex) {
+            System.println("onUpdate exception: " + ex.getErrorMessage());
         }
-        dc.setColor(_lineColor, _bgColor);
-        dc.clear();
-
-        var w = dc.getWidth();
-        var h = dc.getHeight();
-
-        var h1 = (h / 4 * 1.1).toNumber();
-        var h2 = h / 2;
-        var h3 = h - h1;
-        var wo = Math.round(w * 0.05).toNumber();
-        var w1 = Math.round(w * 0.34).toNumber();
-
-        dc.setPenWidth(_lineWidth);
-        dc.drawLine(wo, h1, w - wo, h1);
-        dc.drawLine(0, h2, w, h2);
-        dc.drawLine(wo, h3, w - wo, h3);
-        dc.drawLine(w1, h1, w1, h3);
-        dc.drawLine(w - w1, h1, w - w1, h3);
-
-        var fw1 = w - 2 * wo - 1;
-        var fw2_1 = w1 - wo;
-        var fw2_2 = w - w1 * 2 - 1;
-        var fh1 = h1 - 1;
-        var fh2 = h2 - h1 - 1;
-
-        // top
-        _fields[0].draw(dc, wo, 0, fw1, fh1);
-
-        // 1th row
-        _fields[1].draw(dc, wo, h1 + 1, fw2_1, fh2);
-        _fields[2].draw(dc, w1 + 1, h1 + 1, fw2_2, fh2);
-        _fields[3].draw(dc, w - w1 + 1, h1 + 1, fw2_1, fh2);
-
-        // 2nd row
-        _fields[4].draw(dc, wo, h2 + 1, fw2_1, fh2);
-        _fields[5].draw(dc, w1 + 1, h2 + 1, fw2_2, fh2);
-        _fields[6].draw(dc, w - w1 + 1, h2 + 1, fw2_1, fh2);
-
-        // bottom
-        _fields[7].draw(dc, wo, h3 + 1, fw1, fh1);
     }
 }

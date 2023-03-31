@@ -10,13 +10,18 @@ class TimeField extends Field {
     const LBL_REM = "T/Rem/Elap";
     const LBL_LAP = "T/Lap/Elap";
 
-    private var _elapsedTime as String = "";
-    private var _time as String = "";
-    private const _valueMutedColor as Number = Prop.getValue("valueMutedColor") as Number;
+    private var _elapsedTime as String;
+    private var _time as String;
+    private var _valueMutedColor as Number;
     private var _remValuePerc as Number?;
+    private var _initialized as Boolean?;
 
     function initialize() {
         Field.initialize(LBL_LAP);
+        _elapsedTime = "";
+        _time = "";
+        _valueMutedColor = Prop.getValue("valueMutedColor") as Number;
+        _initialized = true;
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
@@ -56,8 +61,8 @@ class TimeField extends Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
-        if (_fontHeights == null || _fontHeights[0] == null) {
-            System.println(_label + ".draw: _fontHeights: " + _fontHeights);
+        if (_initialized == null) {
+            System.println(_label + ".draw: not initialized yet");
             return;
         }
 

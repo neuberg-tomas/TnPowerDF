@@ -8,15 +8,23 @@ using Toybox.Application.Properties as Prop;
 class PowerField extends Field {
 
     const LBL = "Pwr";
-    private const _nextTargetColor as Number = Prop.getValue("nextTargetColor") as Number;
-    private const _valueMutedColor as Number = Prop.getValue("valueMutedColor") as Number;
-    private const _gaugeColor as Number = Prop.getValue("valueColor") as Number;
+    private var _nextTargetColor as Number;
+    private var _valueMutedColor as Number;
+    private var _gaugeColor as Number;
 
-    private var _almostFinish as Boolean = false;
+    private var _almostFinish as Boolean;
     private var _power as Number?;
+    private var _initialized as Boolean?;
 
     function initialize() {
         Field.initialize(LBL);
+        
+        _almostFinish = false;
+        _nextTargetColor = Prop.getValue("nextTargetColor").toNumber();
+        _valueMutedColor = Prop.getValue("valueMutedColor").toNumber();
+        _gaugeColor = Prop.getValue("valueColor").toNumber();
+        
+        _initialized = true;
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
@@ -42,8 +50,8 @@ class PowerField extends Field {
     }
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
-        if (_fontHeights == null || _fontHeights[0] == null) {
-            System.println(_label + ".draw: _fontHeights: " + _fontHeights);
+        if (_initialized == null) {
+            System.println(_label + ".draw: not initialized yet");
             return;
         }
 
