@@ -16,8 +16,8 @@ class TnPowerDFView extends Ui.DataField {
     private var _workout as WorkoutInfo?;
 
     private const _bgColor as Number = Prop.getValue("colorBg").toNumber();
-    private const _lineColor as Number = Prop.getValue("colorLines").toNumber();
-    private const _lineWidth as Number = 1;
+    private const _lineColor as Number = Prop.getValue("linesColor").toNumber();
+    private const _lineWidth as Number = Prop.getValue("linesWidth").toNumber();
     
     private var _timer as Number = 0;
     private var _timerActive as Boolean = false;
@@ -220,11 +220,11 @@ class TnPowerDFView extends Ui.DataField {
             dc.drawLine(w1, h1, w1, h3);
             dc.drawLine(w - w1, h1, w - w1, h3);
 
-            var fw1 = w - 2 * wo - 1;
+            var fw1 = w - 2 * wo - _lineWidth;
             var fw2_1 = w1 - wo;
-            var fw2_2 = w - w1 * 2 - 1;
-            var fh1 = h1 - 1;
-            var fh2 = h2 - h1 - 1;
+            var fw2_2 = w - w1 * 2 - _lineWidth;
+            var fh1 = h1 - _lineWidth;
+            var fh2 = h2 - h1 - _lineWidth;
 
             // top
             try {
@@ -235,41 +235,41 @@ class TnPowerDFView extends Ui.DataField {
 
             // 1th row
             try {
-                _fields[1].draw(dc, wo, h1 + 1, fw2_1, fh2);
+                _fields[1].draw(dc, wo, h1 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
-                _fields[2].draw(dc, w1 + 1, h1 + 1, fw2_2, fh2);
+                _fields[2].draw(dc, w1 + _lineWidth, h1 + _lineWidth, fw2_2, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
-                _fields[3].draw(dc, w - w1 + 1, h1 + 1, fw2_1, fh2);
+                _fields[3].draw(dc, w - w1 + _lineWidth, h1 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
 
             // 2nd row
             try {
-                _fields[4].draw(dc, wo, h2 + 1, fw2_1, fh2);
+                _fields[4].draw(dc, wo, h2 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
-                _fields[5].draw(dc, w1 + 1, h2 + 1, fw2_2, fh2);
+                _fields[5].draw(dc, w1 + _lineWidth, h2 + _lineWidth, fw2_2, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
-                _fields[6].draw(dc, w - w1 + 1, h2 + 1, fw2_1, fh2);
+                _fields[6].draw(dc, w - w1 + _lineWidth, h2 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }
 
             // bottom
             try {
-                _fields[7].draw(dc, wo, h3 + 1, fw1, fh1);            
+                _fields[7].draw(dc, wo, h3 + _lineWidth, fw1, fh1);
             } catch (ex) {
                System.println("field0.onUpdate exception: " + ex.getErrorMessage());
             }

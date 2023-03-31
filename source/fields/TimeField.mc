@@ -7,8 +7,8 @@ using Toybox.Application.Properties as Prop;
 
 class TimeField extends Field {
 
-    const LBL_REM = "T/Rem/Elap";
-    const LBL_LAP = "T/Lap/Elap";
+    const LBL_REM = "T/Rem/Elp";
+    const LBL_LAP = "T/Lap/Elp";
 
     private var _elapsedTime as String;
     private var _time as String;
@@ -91,9 +91,9 @@ class TimeField extends Field {
         }
 
         dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + w2, y + _fontHeights[0], Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x + w2, y + _fontHeights[0] - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
 
-        var pf = 0.1;
+        var pf = 0.13;
 
         var fw1 = Math.round((w2 - fw2 / 2) * 0.92);
         var fw1Bottom = (fw1 * 0.55).toNumber();

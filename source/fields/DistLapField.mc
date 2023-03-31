@@ -10,7 +10,7 @@ class DistLapField extends Field {
     private var _startDistance as Float?;
 
     function initialize() {
-        Field.initialize("Lap Dist");
+        Field.initialize("L/Dist");
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {

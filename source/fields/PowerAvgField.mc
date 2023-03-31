@@ -7,7 +7,7 @@ using Toybox.Application.Properties as Prop;
 
 class PowerAvgField extends Field {
 
-    const LBL = "Avg Pwr";
+    const LBL = "A/Pwr";
 
     private var _sum as Double = 0d;
     private var _counter as Number = 0;

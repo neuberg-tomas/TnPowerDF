@@ -42,7 +42,7 @@ class Field {
             _fontHeights[i] = Graphics.getFontHeight(_fonts[i]) - Graphics.getFontDescent(_fonts[i]);
         }
 
-        _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_XTINY) - Graphics.getFontDescent(Graphics.FONT_XTINY);
+        _lblFontHieght = Graphics.getFontHeight(Graphics.FONT_SYSTEM_XTINY) - Graphics.getFontDescent(Graphics.FONT_SYSTEM_XTINY);
         _lblColor = Properties.getValue("labelColor").toNumber();
         _lblYPadding = Properties.getValue("labelYPadding").toNumber();
         _valueYPadding = Properties.getValue("valueYPadding").toNumber();
@@ -185,7 +185,7 @@ class Field {
             } else {
                 dc.setColor(_lblColor, Graphics.COLOR_TRANSPARENT);
             }
-            dc.drawText(x, y - _lblYPadding, Graphics.FONT_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
+            dc.drawText(x, y - _lblYPadding, Graphics.FONT_SYSTEM_XTINY, _label, Graphics.TEXT_JUSTIFY_CENTER);
         }
     }
 
@@ -232,3 +232,4 @@ class Field {
             ]);
     }
 }
+

@@ -7,7 +7,7 @@ using Toybox.Application.Properties as Prop;
 
 class PowerLapField extends Field {
 
-    const LBL = "Lap Pwr";
+    const LBL = "L/Pwr";
 
     private var _powerSum as Double = 0d;
     private var _powerCount as Number = 0;

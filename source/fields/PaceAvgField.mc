@@ -8,7 +8,7 @@ using Toybox.Application.Properties as Prop;
 class PaceAvgField extends Field {
 
     function initialize() {
-        Field.initialize("Avg Pace");
+        Field.initialize("A/Pace");
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
