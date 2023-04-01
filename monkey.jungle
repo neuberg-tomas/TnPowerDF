@@ -1,7 +1,5 @@
 project.manifest = manifest.xml
 
-enduro.resourcePath=$(base.resourcePath);resources-280
-epix2.resourcePath=$(base.resourcePath);resources-416;resources-amoled
 fenix6xpro.resourcePath=$(base.resourcePath);resources-280
 fenix7x.resourcePath=$(base.resourcePath);resources-280
 fr265.resourcePath=$(base.resourcePath);resources-416;resources-amoled
@@ -9,8 +7,3 @@ fr265s.resourcePath=$(base.resourcePath);resources-360;resources-amoled
 fr965.resourcePath=$(base.resourcePath);resources-454;resources-amoled
 marq2.resourcePath=$(base.resourcePath);resources-360;resources-amoled
 marq2aviator.resourcePath=$(base.resourcePath);resources-360;resources-amoled
-venu.resourcePath=$(base.resourcePath);resources-360;resources-amoled
-venu2.resourcePath=$(base.resourcePath);resources-416;resources-amoled
-venu2plus.resourcePath=$(base.resourcePath);resources-416;resources-amoled
-venu2s.resourcePath=$(base.resourcePath);resources-360;resources-amoled
-venud.resourcePath=$(base.resourcePath);resources-360;resources-amoled
