@@ -82,7 +82,7 @@ class TnPowerDFView extends Ui.DataField {
     function compute(info as Activity.Info) as Void {     
         try {
             if (_timerActive) {
-                _timer += 1000;
+                _timer ++;
             }
 
             if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {

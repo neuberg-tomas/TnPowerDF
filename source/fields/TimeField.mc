@@ -31,22 +31,23 @@ class TimeField extends Field {
             _label = LBL_LAP;
             _remValuePerc = null;
         } else if (_workout.stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME) {
-            var v = _workout.stepDuration - (context.timer - _workout.stepStartTime) / 1000;
+            var v = _workout.stepDuration - (context.timer - _workout.stepStartTime);
             if (v < 0) {
                 v = 0;
-            } else if (v > 100) {
-                v = 100;
             }
             _label = LBL_REM;
             _value = formatTime(v);
             _remValuePerc =  _workout.stepDuration > 0 ? v * 100 / _workout.stepDuration : null;
+            if (_remValuePerc > 100) {
+                _remValuePerc = 100;
+            }
         } else {
-            _value = formatTime((context.timer - _workout.stepStartTime) / 1000);
+            _value = formatTime(context.timer - _workout.stepStartTime);
             _label = LBL_LAP;
             _remValuePerc = null;
         }
 
-        _elapsedTime = formatTime(context.timer / 1000);
+        _elapsedTime = formatTime(context.timer);
 
         var clock = System.getClockTime();
         _time = Lang.format("$1$:$2$", [
@@ -79,13 +80,13 @@ class TimeField extends Field {
             sh2--;
             var ab = 230;
             var ae = 310;
-            var av = ab + (ae - ab) * (100 - _remValuePerc) / 100;
+            var av = Math.round(ab + (ae - ab) * (100 - _remValuePerc) / 100).toNumber();
             if (av > ab) {
                 dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
                 dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, ab, av);
             }
             if (av < ae) {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
                 dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, av, ae);
             }
         }

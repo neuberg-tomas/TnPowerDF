@@ -1,0 +1,5 @@
+<fonts>
+    <font id="NumNormal" filename="ro49.fnt" antialias="true"/>
+    <font id="NumMedium" filename="ro39.fnt" antialias="true"/>
+    <font id="NumSmall" filename="ro32.fnt" antialias="true"/>
+</fonts>

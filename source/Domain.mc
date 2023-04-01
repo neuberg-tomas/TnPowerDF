@@ -33,8 +33,8 @@ class WorkoutInfo {
         stepDurationType = step.durationType;
         stepDuration = step.durationValue;
 
-        if (stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME && stepDuration > 3) {
-            almostFinishTime =  stepStartTime + (stepDuration - 4) * 1000;
+        if (stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME && stepDuration > 10) {
+            almostFinishTime =  stepStartTime + stepDuration - 4;
         }
     
         if (nextStep != null && (nextStep.step instanceof WorkoutStep)) {

@@ -2,7 +2,6 @@
     <properties>
         <property id="colorBg" type="number">0x000000</property>
         <property id="linesColor" type="number">0x0080c0</property>
-        <property id="linesWidth" type="number">2</property>
         
         <property id="labelColor" type="number">0xe0e0e0</property>
         <property id="labelYPadding" type="number">3</property>

@@ -75,6 +75,23 @@ class PowerField extends Field {
                 sh2--;
 
                 var a0 = 45, a1 = 70, a2 = 110, a3 = 135;
+                var vlo = _workout.stepLo;
+                var vhi = _workout.stepHi;
+                var range = vhi - vlo;
+                if (range < 20) {
+                    range = 20;
+                }
+                var min = vlo - range;
+                if (min < 0) {
+                    min = 0;
+                }
+                var max = vhi + range;
+                var a = _power <= min ? a3 + 5 : 
+                    _power <= vlo ? a3 - (a3 - a2) * (_power - min) / (vlo - min) :
+                    _power <= vhi ? a2 - (a2 - a1) * (_power - vlo) / (vhi - vlo) :
+                    _power <= max ? a1 - (a1 - a0) * (_power - vhi) / (max - vhi) : 
+                    a0 - 5;
+
 
                 dc.setPenWidth(pw);
                 dc.setColor(Graphics.COLOR_PINK, Graphics.COLOR_TRANSPARENT);
@@ -85,19 +102,9 @@ class PowerField extends Field {
                 dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, a2, a3);
 
                 dc.setPenWidth(pw * 2);
-                var vlo = _workout.stepLo;
-                var vhi = _workout.stepHi;
-                var range = vhi - vlo;
-                var min = vlo - range;
-                var max = vhi + range;
-                var a = _power <= min ? a3 + 5 : 
-                    _power <= vlo ? a3 - (a3 - a2) * (_power - min) / (vlo - min) :
-                    _power <= vhi ? a2 - (a2 - a1) * (_power - vlo) / (vhi - vlo) :
-                    _power <= max ? a1 - (a1 - a0) * (_power - vhi) / (max - vhi) : 
-                    a0 - 5;
-
                 dc.setColor(_gaugeColor, Graphics.COLOR_TRANSPARENT);
                 dc.drawArc(sw2, sh2, r - pw / 2, Graphics.ARC_COUNTER_CLOCKWISE, a-1, a+1);
+
             }                        
 
             if (_workout.stepNextTargetType != null && _workout.stepNextTargetType == Activity.WORKOUT_STEP_TARGET_POWER && _almostFinish) {

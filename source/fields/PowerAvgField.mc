@@ -20,7 +20,7 @@ class PowerAvgField extends Field {
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
         if (info.currentPower != null && _prevTimer != context.timer) {
-            _sum += info.averagePower / context.envCorrection;
+            _sum += info.currentPower / context.envCorrection;
             _counter ++;
         }
         _prevTimer = context.timer;

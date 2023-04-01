@@ -14,7 +14,7 @@ class PaceAvgField extends Field {
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
           if (info.elapsedDistance != null && info.elapsedDistance > 0) {
-            var pace = (info.timerTime / info.elapsedDistance).toLong();
+            var pace = (info.timerTime / info.elapsedDistance).toNumber();
             _value = Lang.format("$1$:$2$", [ pace / 60, (pace % 60).format("%02d")]);
         } else {
             _value = NO_VALUE;
