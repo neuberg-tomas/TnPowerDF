@@ -16,11 +16,11 @@ class DistLapField extends Field {
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
         if (info.elapsedDistance != null) {
-            var distance = info.elapsedDistance / 1000;
+            var distance = info.elapsedDistance / 1000.0;
             if (_startDistance == null) {
                 _startDistance = distance;
             }
-            _value = (distance - _startDistance).format("%.1f");
+            _value = (distance - _startDistance).format("%.2f");
         } else {
             _value = NO_VALUE;
         }

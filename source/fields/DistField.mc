@@ -13,7 +13,7 @@ class DistField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
-        _value = info.elapsedDistance != null ? (info.elapsedDistance / 1000).format("%.1f") : NO_VALUE;
+        _value = info.elapsedDistance != null ? (info.elapsedDistance / 1000.0).format("%.2f") : NO_VALUE;
     }
 
 }
