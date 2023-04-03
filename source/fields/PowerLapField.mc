@@ -28,7 +28,7 @@ class PowerLapField extends Field {
         }
         
         if (_powerCount > 0) {
-            var v = (_powerSum / _powerCount).toNumber();
+            var v = Math.round(_powerSum / _powerCount).toNumber();
             _value = v.format("%d");
             var zone = context.getPowerZone(v);
             _label = zone == null ? LBL : LBL + " " + zone;

@@ -19,11 +19,14 @@ class PowerAvgField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
-        if (info.currentPower != null && _prevTimer != context.timer) {
-            _sum += info.currentPower / context.envCorrection;
-            _counter ++;
+        if (context.timer != null) {
+            if (info.currentPower != null && _prevTimer != context.timer) {
+                _sum += info.currentPower / context.envCorrection;
+                _counter ++;
+            }
+            _prevTimer = context.timer;
         }
-        _prevTimer = context.timer;
+
         if (_counter == 0) {
             setZone(null);
             _value = NO_VALUE;
@@ -35,6 +38,12 @@ class PowerAvgField extends Field {
             setZone(zone);
             _label = zone == null ? LBL : LBL + " " + zone;
         }
+    }
+
+   function onStart() as Void {
+        Field.onStart();
+        _sum = 0d;
+        _counter = 0;
     }
 
 }

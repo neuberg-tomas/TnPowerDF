@@ -64,22 +64,17 @@ class Field {
     }
 
     function onWorkoutStep(info as WorkoutInfo) as Void {
-        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onWorkoutStep, workout=" + info.dump());
-
         _workout = info;
         onLap();
     }
 
     function onStart() as Void {
-        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onStart");
     }
 
     function onStop() as Void {
-        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onStop");
     }
 
     function onLap() as Void {
-        System.println(System.getClockTime().sec.format("%02d") + ": " + _label + ".onLap");
     }
 
     protected function setZone(zone as Number?) as Void {
