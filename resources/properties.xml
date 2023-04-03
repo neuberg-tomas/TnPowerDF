@@ -51,7 +51,7 @@
 
     <settings>
        <setting propertyKey="@Properties.envCorrection" title="@Strings.settingEnvCorrection">
-            <settingConfig type="boolean" />
+            <settingConfig type="boolean" required="true" />
         </setting>
         <group id="grpEnvCorrectionsCurr" enableIfTrue="@Properties.envCorrection" title="@Strings.grpEnvCorrectionsCurr">
             <setting propertyKey="@Properties.envCurrTmp" title="@Strings.settingEnvTmp">
@@ -63,10 +63,10 @@
             <setting propertyKey="@Properties.envCurrAlt" title="@Strings.settingEnvAlt">
                 <settingConfig type="numeric" required="true" min="-100" max="8000" errorMessage="@Strings.settingErrorEnvAlt" />
             </setting>
-            <setting propertyKey="@Properties.envCurrAltSensor" title="@Strings.settingEnvCurrAltSensor">
-                <settingConfig type="boolean" />
-            </setting>
         </group>
+        <setting propertyKey="@Properties.envCurrAltSensor" title="@Strings.settingEnvCurrAltSensor">
+            <settingConfig type="boolean" required="true" />
+        </setting>
         <group id="grpEnvCorrectionsTest" enableIfTrue="@Properties.envCorrection" title="@Strings.grpEnvCorrectionsTest">
             <setting propertyKey="@Properties.envTestTmp" title="@Strings.settingEnvTmp">
                 <settingConfig type="numeric" required="true" min="-20" max="50" errorMessage="@Strings.settingErrorEnvTmp" />
@@ -101,12 +101,6 @@
         </group>
 
         <group id="grpStaticTarget" title="@Strings.grpStaticTarget">
-            <setting propertyKey="@Properties.useStaticTarget" title="@Strings.settingUseStaticTarget">
-                <settingConfig type="boolean" />
-            </setting>
-           <setting propertyKey="@Properties.useLastStepTarget" title="@Strings.settingUseLastStepTarget">
-                <settingConfig type="boolean" />
-            </setting>
             <setting propertyKey="@Properties.staticTargetLo" title="@Strings.settingStaticTargetLo">
                 <settingConfig type="numeric" required="true" min="0" max="999" errorMessage="@Strings.settingErrorEnvPwr" />
             </setting>
@@ -114,6 +108,12 @@
                 <settingConfig type="numeric" required="true" min="0" max="999" errorMessage="@Strings.settingErrorEnvPwr" />
             </setting>
         </group>
+        <setting propertyKey="@Properties.useStaticTarget" title="@Strings.settingUseStaticTarget">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.useLastStepTarget" title="@Strings.settingUseLastStepTarget">
+            <settingConfig type="boolean" />
+        </setting>
 
         <group id="grpAlert" title="@Strings.grpAlert">
             <setting propertyKey="@Properties.alertType" title="@Strings.settingAlertType">
