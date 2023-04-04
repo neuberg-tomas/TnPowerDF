@@ -118,7 +118,7 @@ class Field {
             if (sound && alert == 0) {
                Attention.playTone({:toneProfile => [
                     new ToneProfile(400,  500),
-                    new ToneProfile(0,  300)
+                    new ToneProfile(0,  200)
                 ], :repeatCount => 2});
             }
         }
@@ -147,7 +147,7 @@ class Field {
                 new VibeProfile(100, 1500)
             ]);
         }
-        _alertNextPlay = timer + _alertDelay * 1000;
+        _alertNextPlay = timer + _alertDelay;
         _alertDelay = (_alertDelay * ((Properties.getValue("alertDelayMultiplier") as Number) / 100.0 + 1.0)).toNumber();
         var max = Properties.getValue("alertDelaySecMax") as Number;
         if (_alertDelay > max) {

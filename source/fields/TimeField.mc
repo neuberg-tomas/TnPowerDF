@@ -86,7 +86,7 @@ class TimeField extends Field {
                 dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, ab, av);
             }
             if (av < ae) {
-                dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
                 dc.drawArc(sw2, sh2, r, Graphics.ARC_COUNTER_CLOCKWISE, av, ae);
             }
         }

@@ -1,6 +1,6 @@
 <strings>
     <string id="appName">TnPowerDF</string>
-    <string id="appVersion">Version 1.0.0</string>
+    <string id="appVersion">Version 1.0.1</string>
     
     <string id="settingErrorEnvTmp">Temparature must be number from range [-20, 50]</string>
     <string id="settingErrorEnvHum">Humidity must be number from range [10, 100]</string>
@@ -11,14 +11,14 @@
     <string id="settingEnvCorrection">Apply environmental correction</string>
     <string id="grpEnvCorrectionsCurr">Actual environment</string>
     <string id="grpEnvCorrectionsTest">CP test environment</string>
-    <string id="settingEnvCurrAltSensor">Use sensor for altitude</string>    
+    <string id="settingEnvCurrAltSensor">... use sensor for altitude</string>    
     <string id="settingEnvTmp">Temperature (°C)</string>
     <string id="settingEnvHum">Humidity (%)</string>
     <string id="settingEnvAlt">Altitude (m)</string>
     
     <string id="grpStaticTarget">Static target</string>
-    <string id="settingUseStaticTarget">Active</string>
-    <string id="settingUseLastStepTarget">Last step</string>
+    <string id="settingUseStaticTarget">... active</string>
+    <string id="settingUseLastStepTarget">... use last step target</string>
     <string id="settingStaticTargetLo">Lower</string>
     <string id="settingStaticTargetHi">Upper</string>
 
