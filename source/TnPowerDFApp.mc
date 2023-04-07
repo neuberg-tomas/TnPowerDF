@@ -30,7 +30,7 @@ class TnPowerDFApp extends Application.AppBase {
 
     function getSettingsView() as Array<Views or InputDelegates>? {
         var menu = new SettingsMenu();
-        return [ menu, new SettingsMenuDelegate(menu.getItem(menu.findItemById(:mnuEnvCorrFactor))) ] as Array<Views or InputDelegates>;
+        return [ menu, new SettingsMenuDelegate(menu) ] as Array<Views or InputDelegates>;
     }
 }
 
