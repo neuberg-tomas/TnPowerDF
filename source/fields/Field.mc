@@ -135,7 +135,7 @@ class Field {
                 new ToneProfile(1400, 400)
             ]});
             Attention.vibrate([
-                new VibeProfile(100, 1000), new VibeProfile(0, 750), new VibeProfile(100, 1000)
+                new VibeProfile(25, 400), new VibeProfile(50, 400), new VibeProfile(100, 400)
             ]);
         } else if (_alert == 2) {
             Attention.playTone({:toneProfile=>[
@@ -144,7 +144,7 @@ class Field {
                 new ToneProfile(400, 400)
             ]});
             Attention.vibrate([
-                new VibeProfile(100, 1500)
+                new VibeProfile(100, 400), new VibeProfile(50, 400), new VibeProfile(25, 400)
             ]);
         }
         _alertNextPlay = timer + _alertDelay;

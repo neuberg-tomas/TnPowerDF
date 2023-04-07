@@ -23,6 +23,8 @@ class SettingsMenu extends Menu2 {
         addItem(new ToggleMenuItem("Environmental corrections", null, :mnuEnvCorrection,
             Properties.getValue("envCorrection"), opts));
 
+        addItem(new MenuItem("Env factor", $.computeEnvCorrection(null).format("%.5f"), :mnuEnvCorrFactor, opts));
+
         addItem(new MenuItem("CP/FTP", Properties.getValue("ftp").toString() + " W", :mnuFTP, opts));
 
         addItem(new MenuItem("Altert type", alertTypeLabels[Properties.getValue("alertType") as Number], :mnuAlertType, opts));
@@ -39,8 +41,10 @@ class SettingsMenu extends Menu2 {
 }
 
 class SettingsMenuDelegate extends Menu2InputDelegate {
-    function initialize() {
+    private var _mnuEnvCorrFactor as MenuItem;
+    function initialize(mnuEnvCorrFactor as MenuItem) {
         Menu2InputDelegate.initialize();
+        _mnuEnvCorrFactor = mnuEnvCorrFactor;
     }
 
     public function onSelect(item as MenuItem) as Void {
@@ -65,29 +69,35 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
                 break;
             case :mnuEnvCorrection: 
                 Properties.setValue("envCorrection", (item as ToggleMenuItem).isEnabled());
+                refreshEnvCorrFactor();
                 break;
             case :mnuEnvAltSensor: 
                 Properties.setValue("envCurrAltSensor", (item as ToggleMenuItem).isEnabled());
+                refreshEnvCorrFactor();
                 break;                
             case :mnuAlertType:
-                WatchUi.pushView(buildAltTypeMenu(), new AltTypeMenyDelegate(item), WatchUi.SLIDE_LEFT);
+                WatchUi.pushView(buildAlertTypeMenu(), new AltTypeMenyDelegate(item), WatchUi.SLIDE_LEFT);
                 break;
             case :mnuUseStaticTarget: 
                 Properties.setValue("useStaticTarget", (item as ToggleMenuItem).isEnabled());
                 break;           
             case :mnuStaticTargetLo:
-                enterNumber(item, "staticTargetLo", "Lower target", 0, 999, 1, " W");
+                enterPower(item, "staticTargetLo", "Lower target");
                 break;
             case :mnuStaticTargetHi:
-                enterNumber(item, "staticTargetHi", "Upper target", 0, 999, 1, " W");
+                enterPower(item, "staticTargetHi", "Upper target");
                 break;
             case :mnuUseLastStepTarget: 
                 Properties.setValue("useLastStepTarget", (item as ToggleMenuItem).isEnabled());
                 break;                
             case :mnuFTP:
-                enterNumber(item, "ftp", "CP/FTP", 100, 500, 1, " W");
+                enterPower(item, "ftp", "CP/FTP");
                 break;            
         }
+    }
+
+    private function refreshEnvCorrFactor() as Void {
+        _mnuEnvCorrFactor.setSubLabel($.computeEnvCorrection(null).format("%.5f"));
     }
 
     private function enterNumber(item as MenuItem, property as String, title as String, min as Number, max as Number, step as Number,
@@ -101,28 +111,36 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
                 :pattern => [factory],
                 :defaults =>[factory.getIndex(Properties.getValue(property))]
             }), 
-            new NumPropPickerDelegate(item, property, units), 
+            new NumPropPickerDelegate(item, property, units, _mnuEnvCorrFactor), 
             WatchUi.SLIDE_LEFT
         );
     }
 
-    private function enterAlt(item as MenuItem, property as String, title as String) as Void {    
-        var factory1 = new $.NumberFactory(0, 80, 1, {});
+    private function enterPower(item as MenuItem, property as String, title as String) as Void {
+        enterBigNum(item, property, title, 999, " W", null);
+    }
+
+    private function enterAlt(item as MenuItem, property as String, title as String) as Void {
+        enterBigNum(item, property, title, 8000, " m", _mnuEnvCorrFactor);
+    }
+
+    private function enterBigNum(item as MenuItem, property as String, title as String, max as Number, units as String, mnuEnvCorrFactor as MenuItem?) as Void {
+        var factory1 = new $.NumberFactory(0, max / 100, 1, {});
         var factory2 = new $.NumberFactory(0, 99, 1, {:format => "%02d"});
-        var alt = Properties.getValue(property) as Number;
+        var v = Properties.getValue(property) as Number;
         WatchUi.pushView(
             new Picker({
                 :title => new Text({:text=>title, :locX => WatchUi.LAYOUT_HALIGN_CENTER, :locY => WatchUi.LAYOUT_VALIGN_BOTTOM, 
                                     :color => Graphics.COLOR_WHITE}), 
                 :pattern => [factory1, factory2],
-                :defaults =>[factory1.getIndex(alt / 100), factory2.getIndex(alt % 100)]
+                :defaults =>[factory1.getIndex(v / 100), factory2.getIndex(v % 100)]
             }), 
-            new AltPropPickerDelegate(item, property), 
+            new BigNumPropPickerDelegate(item, property, units, mnuEnvCorrFactor), 
             WatchUi.SLIDE_LEFT
         );
     }
 
-    private function buildAltTypeMenu() as Menu2 {
+    private function buildAlertTypeMenu() as Menu2 {
         var menu = new Menu2({:title => "Alert type"});
         for (var i = 0; i < alertTypeLabels.size(); i++) {
             menu.addItem(new MenuItem(alertTypeLabels[i], null, i.toString(), {}));
@@ -134,14 +152,16 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
 
 class NumPropPickerDelegate extends PickerDelegate {
     protected var _parentItem as MenuItem;
-    protected  var _property as String;
-    protected  var _units as String;
+    protected var _property as String;
+    protected var _units as String;
+    protected var _mnuEnvCorrFactor as MenuItem?;
 
-    function initialize(parentItem as MenuItem, property as String, units as String) {
+    function initialize(parentItem as MenuItem, property as String, units as String, mnuEnvCorrFactor as MenuItem?) {
         PickerDelegate.initialize();
         _parentItem = parentItem;
         _property = property;
         _units = units;
+        _mnuEnvCorrFactor = mnuEnvCorrFactor;
     }    
 
     public function onCancel() as Boolean {
@@ -154,6 +174,9 @@ class NumPropPickerDelegate extends PickerDelegate {
         Properties.setValue(_property, v);
         _parentItem.setSubLabel(v + _units);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        if (_mnuEnvCorrFactor != null) {
+            _mnuEnvCorrFactor.setSubLabel($.computeEnvCorrection(null).format("%.5f"));
+        }
         return true;
     }
 
@@ -162,9 +185,9 @@ class NumPropPickerDelegate extends PickerDelegate {
     }
 }
 
-class AltPropPickerDelegate extends NumPropPickerDelegate {
-    function initialize(parentItem as MenuItem, property as String) {
-        NumPropPickerDelegate.initialize(parentItem, property, " m");
+class BigNumPropPickerDelegate extends NumPropPickerDelegate {
+    function initialize(parentItem as MenuItem, property as String, units as String, callback as Method?) {
+        NumPropPickerDelegate.initialize(parentItem, property, units, callback);
     }
 
     protected function computeValue(values as Array) as Number {
