@@ -15,6 +15,11 @@ class PowerField extends Field {
     private var _almostFinish as Boolean;
     private var _power as Number?;
     private var _initialized as Boolean?;
+    private const _maxAvgDuration as Number = 30;
+    private var _values as Array<Number> = new Array<Number>[_maxAvgDuration];
+    private var _valueIdx1 as Number = 0;
+    private var _valueIdx2 as Number = 0;
+    private var _valuesSum as Number = 0;
 
     function initialize() {
         Field.initialize(LBL);
@@ -23,24 +28,46 @@ class PowerField extends Field {
         _nextTargetColor = Prop.getValue("nextTargetColor").toNumber();
         _valueMutedColor = Prop.getValue("valueMutedColor").toNumber();
         _gaugeColor = Prop.getValue("valueColor").toNumber();
+        reset();
         
         _initialized = true;
     }
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
-        Field.compute(info, context);
-        _power = info.currentPower == null ? null : Math.round(info.currentPower / context.envCorrection).toNumber();
+        Field.compute(info, context);       
+        var v = info.currentPower == null ? null : Math.round(info.currentPower / context.envCorrection).toNumber();
         _almostFinish = _workout != null && _workout.almostFinishTime != null && context.timer >= _workout.almostFinishTime;
-        if (_power == null) {
-            _label = LBL;
-            _value = NO_VALUE;
-            setZone(null);
-            clearAlert();
+        var avgDuration = $.min(_maxAvgDuration, Prop.getValue("pwrAveraging") as Number);
+        _label = avgDuration > 0 ? avgDuration + "s " + LBL : LBL;
+        if (v == null) {
+            reset();
         } else {
+            if (avgDuration > 0) {
+                _valueIdx2 = (_valueIdx2 + 1) % _maxAvgDuration;
+                _values[_valueIdx2] = v;
+                _valuesSum += v;
+                var aDur = _valueIdx2 - _valueIdx1 + 1;
+                if (aDur < 0) {
+                    aDur += _maxAvgDuration;
+                }
+                while (aDur > avgDuration) {
+                    _valuesSum -= _values[_valueIdx1];
+                    aDur--;
+                    _valueIdx1 = (_valueIdx1 + 1) % _maxAvgDuration;
+                }
+                _power = Math.round(_valuesSum.toFloat() / aDur).toNumber();
+            } else {
+                _valueIdx1 = 0;
+                _valueIdx2 = -1;
+                _valuesSum = 0;
+                _power = v;
+            }
             _value = _power.format("%d");
             var zone = context.getPowerZone(_power);
             setZone(zone);
-            _label = zone == null ? LBL : LBL + " " + zone;
+            if (zone != null) {
+                _label += " " + zone;
+            }
             if (_workout != null && _workout.stepTargetType == Activity.WORKOUT_STEP_TARGET_POWER) {
                 setAlert(_power < _workout.stepLo ? 1 : _power > _workout.stepHi ? 2 : 0, Prop.getValue("alertType") == 2, context);
             } else {
@@ -48,6 +75,22 @@ class PowerField extends Field {
             }
         }
     }
+
+    function onStart() as Void {
+        reset();
+        _label = LBL;
+    }
+
+    private function reset() as Void {
+        _valueIdx1 = 0;
+        _valueIdx2 = -1;
+        _valuesSum = 0;
+        _power = null;
+        _value = NO_VALUE;
+        setZone(null);
+        clearAlert();
+    }
+
 
     function draw(dc as Dc, x as Number, y as Number, w as Number, h as Number) as Void {
         if (_initialized == null) {

@@ -1,6 +1,6 @@
 <strings>
     <string id="appName">TnPowerDF</string>
-    <string id="appVersion">Version 1.0.3</string>
+    <string id="appVersion">Version 1.0.4</string>
     
     <string id="settingErrorEnvTmp">Temparature must be number from range [-20, 50]</string>
     <string id="settingErrorEnvHum">Humidity must be number from range [10, 100]</string>
@@ -41,5 +41,11 @@
 
     <string id="settingErrorDelay">Delay must be number from range [5, 600]</string>
     <string id="settingErrorMultiplier">Must be number from range [0, 100]</string>
+
+    <string id="settingPwrAveraging">Power averaging</string>
+    <string id="settingPwrAveraging0">disabled</string>
+    <string id="settingPwrAveraging3">3s</string>
+    <string id="settingPwrAveraging5">5s</string>
+    <string id="settingPwrAveraging30">30s</string>
 
 </strings>

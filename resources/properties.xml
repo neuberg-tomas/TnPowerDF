@@ -30,9 +30,11 @@
         <property id="powerZone4PercMax" type="number">115</property>
 
         <property id="alertType" type="number">1</property> <!-- 0 = off, 1 = lap pwr, 2 = curr pwr -->
-        <property id="alertDelaySecMin" type="number">5</property>
+        <property id="alertDelaySecMin" type="number">10</property>
         <property id="alertDelaySecMax" type="number">45</property>
-        <property id="alertDelayMultiplier" type="number">40</property>
+        <property id="alertDelayMultiplier" type="number">33</property>
+
+        <property id="pwrAveraging" type="number">0</property>
 
         <property id="envCorrection" type="boolean">true</property>
         <property id="envCurrAltSensor" type="boolean">true</property>
@@ -133,6 +135,15 @@
                 <settingConfig type="numeric" required="true" min="0" max="100" errorMessage="@Strings.settingErrorMultiplier" />
             </setting>
         </group>
+
+        <setting propertyKey="@Properties.pwrAveraging" title="@Strings.settingPwrAveraging">
+            <settingConfig type="list" required="true">
+                <listEntry value="0">@Strings.settingPwrAveraging0</listEntry>
+                <listEntry value="3">@Strings.settingPwrAveraging3</listEntry>
+                <listEntry value="5">@Strings.settingPwrAveraging5</listEntry>
+                <listEntry value="30">@Strings.settingPwrAveraging30</listEntry>
+            </settingConfig>
+        </setting>
 
         <setting propertyKey="@Properties.dummy" title="@Strings.appVersion">
             <settingConfig type="alphanumeric" readonly="true" />

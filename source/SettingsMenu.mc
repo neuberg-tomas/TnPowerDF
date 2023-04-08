@@ -2,7 +2,13 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-var alertTypeLabels as Array<String> = ["Disabled", "Lap power", "Current power"] as Array<String>;
+const alertTypeLabels as Array<String> = ["Disabled", "Lap power", "Current power"] as Array<String>;
+const pwrAvgLabels as Dictionary<Number, String> = {
+    0 => WatchUi.loadResource(Rez.Strings.settingPwrAveraging0),
+    3 => WatchUi.loadResource(Rez.Strings.settingPwrAveraging3),
+    5 => WatchUi.loadResource(Rez.Strings.settingPwrAveraging5),
+    30 => WatchUi.loadResource(Rez.Strings.settingPwrAveraging30)
+} as Dictionary<Number, String>;
 
 class SettingsMenu extends Menu2 {
     function initialize() {
@@ -33,6 +39,8 @@ class SettingsMenu extends Menu2 {
         addItem(new MenuItem("Upper target", Properties.getValue("staticTargetHi").toString() + " W", :mnuStaticTargetHi, opts));
         addItem(new ToggleMenuItem("Use last step target", null, :mnuUseLastStepTarget,
             Properties.getValue("useLastStepTarget"), opts));            
+
+        addItem(new MenuItem(Rez.Strings.settingPwrAveraging, pwrAvgLabels[Properties.getValue("pwrAveraging") as Number], :mnuPwrAvg, opts));
 
         addItem(new VersionMenuItem());
     }
@@ -85,7 +93,10 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
                 _mnuVersion.refresh();
                 break;                
             case :mnuAlertType:
-                WatchUi.pushView(buildAlertTypeMenu(), new AltTypeMenyDelegate(item), WatchUi.SLIDE_LEFT);
+                WatchUi.pushView(buildAlertTypeMenu(), new AltTypeMenuDelegate(item), WatchUi.SLIDE_LEFT);
+                break;
+            case :mnuPwrAvg:
+                WatchUi.pushView(buildPwrAvgMenu(), new PwrAvgMenuDelegate(item), WatchUi.SLIDE_LEFT);
                 break;
             case :mnuUseStaticTarget: 
                 Properties.setValue("useStaticTarget", (item as ToggleMenuItem).isEnabled());
@@ -153,6 +164,16 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
         menu.setFocus(Properties.getValue("alertType"));
         return menu;
     }
+
+    private function buildPwrAvgMenu() as Menu2 {
+        var menu = new Menu2({:title => Rez.Strings.settingPwrAveraging});
+        var values = pwrAvgLabels.keys();
+        for (var i = 0; i < values.size(); i++) {
+            menu.addItem(new MenuItem(pwrAvgLabels[values[i]], null, values[i].toString(), {}));
+        }
+        menu.setFocus(menu.findItemById(Properties.getValue("pwrAveraging").toString()));
+        return menu;
+    }
 }
 
 class NumPropPickerDelegate extends PickerDelegate {
@@ -200,7 +221,7 @@ class BigNumPropPickerDelegate extends NumPropPickerDelegate {
     }
 }
 
-class AltTypeMenyDelegate extends Menu2InputDelegate {
+class AltTypeMenuDelegate extends Menu2InputDelegate {
     private var _parentItem as MenuItem;
 
     function initialize(parentItem as MenuItem) {
@@ -212,6 +233,22 @@ class AltTypeMenyDelegate extends Menu2InputDelegate {
         var type = item.getId().toNumber();
         Properties.setValue("alertType", type);
         _parentItem.setSubLabel(alertTypeLabels[type]);
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+}
+
+class PwrAvgMenuDelegate extends Menu2InputDelegate {
+    private var _parentItem as MenuItem;
+
+    function initialize(parentItem as MenuItem) {
+        Menu2InputDelegate.initialize();
+        _parentItem = parentItem;
+    }
+
+    public function onSelect(item as MenuItem) as Void {
+        var avg = item.getId().toNumber();
+        Properties.setValue("pwrAveraging", avg);
+        _parentItem.setSubLabel(pwrAvgLabels[avg]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
