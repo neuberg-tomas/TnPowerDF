@@ -1,6 +1,6 @@
 <strings>
     <string id="appName">TnPowerDF</string>
-    <string id="appVersion">Version 1.0.4</string>
+    <string id="appVersion">Version 1.1.3</string>
     
     <string id="settingErrorEnvTmp">Temparature must be number from range [-20, 50]</string>
     <string id="settingErrorEnvHum">Humidity must be number from range [10, 100]</string>
@@ -9,35 +9,33 @@
     <string id="settingErrorEnvZonePerc">% must be number from range [0, 500]</string>
 
     <string id="settingEnvCorrection">Apply environmental correction</string>
-    <string id="grpEnvCorrectionsCurr">Actual environment</string>
-    <string id="grpEnvCorrectionsTest">CP test environment</string>
-    <string id="settingEnvCurrAltSensor">... use sensor for altitude</string>    
-    <string id="settingEnvTmp">Temperature (°C)</string>
-    <string id="settingEnvHum">Humidity (%)</string>
-    <string id="settingEnvAlt">Altitude (m)</string>
+    <string id="settingEnvCurrAltSensor">Use sensor for real altitude</string>    
+    <string id="settingRealEnvTmp">Real Temperature (°C)</string>
+    <string id="settingRealEnvHum">Real Humidity (%)</string>
+    <string id="settingRealEnvAlt">Real Altitude (m)</string>
+    <string id="settingTestEnvTmp">Test Temperature (°C)</string>
+    <string id="settingTestEnvHum">Test Humidity (%)</string>
+    <string id="settingTestEnvAlt">Test Altitude (m)</string>
     
-    <string id="grpStaticTarget">Static target</string>
-    <string id="settingUseStaticTarget">... active</string>
-    <string id="settingUseLastStepTarget">... use last step target</string>
-    <string id="settingStaticTargetLo">Lower</string>
-    <string id="settingStaticTargetHi">Upper</string>
+    <string id="settingUseStaticTarget">Static target active</string>
+    <string id="settingUseLastStepTarget">Use last step target</string>
+    <string id="settingStaticTargetLo">Static Lower Target</string>
+    <string id="settingStaticTargetHi">Static Upper Target</string>
 
-    <string id="grpPowerZones">Power zones</string>
-    <string id="settingFTP">CP (W)</string>
-    <string id="settingPowerZone1PercMin">Zone 1 min (%)</string>
-    <string id="settingPowerZone1PercMax">Zone 1 max (%)</string>
-    <string id="settingPowerZone2PercMax">Zone 2 max (%)</string>
-    <string id="settingPowerZone3PercMax">Zone 3 max (%)</string>
-    <string id="settingPowerZone4PercMax">Zone 4 max (%)</string>
+    <string id="settingFTP">CP/FTP (W)</string>
+    <string id="settingPowerZone1PercMin">Power Zone 1 min (%)</string>
+    <string id="settingPowerZone1PercMax">Power Zone 1 max (%)</string>
+    <string id="settingPowerZone2PercMax">Power Zone 2 max (%)</string>
+    <string id="settingPowerZone3PercMax">Power Zone 3 max (%)</string>
+    <string id="settingPowerZone4PercMax">Power Zone 4 max (%)</string>
 
-    <string id="grpAlert">Alert</string>
-    <string id="settingAlertType">Type</string>
+    <string id="settingAlertType">Alert Type</string>
     <string id="settingAlertType0">Disabled</string>
     <string id="settingAlertType1">Lap power</string>
     <string id="settingAlertType2">Current power</string>
-    <string id="settingAlertDelaySecMin">Min delay (s)</string>
-    <string id="settingAlertDelaySecMax">Max delay (s)</string>
-    <string id="settingAlertDelayMultiplier">Delay increase (%)</string>
+    <string id="settingAlertDelaySecMin">Alert min delay (s)</string>
+    <string id="settingAlertDelaySecMax">Alert max delay (s)</string>
+    <string id="settingAlertDelayMultiplier">Alert delay increase (%)</string>
 
     <string id="settingErrorDelay">Delay must be number from range [5, 600]</string>
     <string id="settingErrorMultiplier">Must be number from range [0, 100]</string>
