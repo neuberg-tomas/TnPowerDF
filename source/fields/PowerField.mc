@@ -76,7 +76,7 @@ class PowerField extends Field {
         }
     }
 
-    function onStart() as Void {
+    function onStop() as Void {
         reset();
         _label = LBL;
     }

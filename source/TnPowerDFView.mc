@@ -1,8 +1,10 @@
 import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
+
 using Toybox.WatchUi as Ui;
 using Toybox.Application.Properties as Prop;
+using Toybox.System;
 
 class TnPowerDFView extends Ui.DataField {
 
@@ -31,10 +33,10 @@ class TnPowerDFView extends Ui.DataField {
 
         var heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_RUNNING);
         if (heartRateZones == null) {
-            System.println("no run specific HR zones found, using generic ones");
+            $.log("no run specific HR zones found, using generic ones");
             heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
         } else {
-            System.println("using run specific power zones");
+            $.log("using run specific power zones");
         }
         if (heartRateZones != null && heartRateZones.size() > 2) {
             _heartRateZones = new Array<Number>[heartRateZones.size() - 1];
@@ -44,13 +46,13 @@ class TnPowerDFView extends Ui.DataField {
         } 
         
         if (_heartRateZones == null) {
-            System.println("no HR zones are set");
+            $.log("no HR zones are set");
         } else {
-            System.print("HR zones: ");
+            var s = "";
             for (var i = 0; i < _heartRateZones.size(); i++) {
-                System.print((i > 0 ? ", " : "") + (i + 1) + "=" + _heartRateZones[i]);
+                s += (i > 0 ? ", " : "") + (i + 1) + "=" + _heartRateZones[i];
             }
-            System.println("");
+            $.log("HR zones: " + s);
         }
 
         var ftp = Prop.getValue("ftp") as Number;
@@ -58,6 +60,11 @@ class TnPowerDFView extends Ui.DataField {
         for (var i = 1; i < _powerZones.size(); i++) {
             _powerZones[i] = computePowerZone(ftp, Prop.getValue("powerZone" + i + "PercMax") as Number);
         }
+
+        $.log("Activity: " + Activity.getActivityInfo());
+        $.log("Workout: " + Activity.getCurrentWorkoutStep());
+
+        //TODO: resume persisted context
 
         _initialized = true;
     }
@@ -91,6 +98,7 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onWorkoutStarted() as Void {
+        $.log("onWorkoutStarted");
         _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
@@ -98,13 +106,15 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onWorkoutStepComplete() as Void {
+        $.log("onWorkoutStepComplete");
+
         _workout = getNextWorkout();
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
         }
     }
 
-    private function getNextWorkout() {
+    private function getNextWorkout() {        
         var step = Activity.getCurrentWorkoutStep();
         if (step == null) {
             if (_workout != null && Prop.getValue("useLastStepTarget")) {
@@ -120,6 +130,8 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onTimerLap() as Void {
+        $.log("onTimerLap");
+
         if (_workout != null && _workout.isStatic()) {
             _workout.stepStartTime = _timer;
         }
@@ -129,7 +141,8 @@ class TnPowerDFView extends Ui.DataField {
     }
 
     function onTimerStart() as Void {
-        _timer = 0;
+        $.log("onTimerStart");
+
         _timerActive = true;
 
         if ((_workout == null || !_workout.isSet()) && Prop.getValue("useStaticTarget")) {
@@ -141,24 +154,38 @@ class TnPowerDFView extends Ui.DataField {
             }
         }
 
-            for (var i = 0; i < _fields.size(); i++) {
+        for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onStart();
         }
     }
 
     function onTimerStop() as Void {
+        $.log("onTimerStop");        
         _timerActive = false;
-        for (var i = 0; i < _fields.size(); i++) {
-            _fields[i].onStop();
-        }
+
+        //TODO: persist context
     }
 
     function onTimerPause() as Void {
+        $.log("onTimerPause");
         _timerActive = false;
     }
 
     function onTimerResume() as Void {
+        $.log("onTimerResume");
         _timerActive = true;
+    }
+
+    function onTimerReset() as Void {
+        $.log("onTimerReset");
+        _timer = 0;
+        _timerActive = false;
+
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].onStop();
+        }
+
+        //TODO: deletet persisted context
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -243,4 +270,9 @@ class TnPowerDFView extends Ui.DataField {
             System.println("onUpdate exception: " + ex.getErrorMessage());
         }
     }
+}
+
+function log(msg as String) as Void {
+    var t = System.getClockTime();
+    System.println(t.hour.format("%02d") + ":" + t.min.format("%02d") + ":" + t.sec.format("%02d") + " - " + msg);
 }

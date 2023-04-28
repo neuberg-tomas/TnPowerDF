@@ -40,8 +40,8 @@ class PowerAvgField extends Field {
         }
     }
 
-   function onStart() as Void {
-        Field.onStart();
+   function onStop() as Void {
+        Field.onStop();
         _sum = 0d;
         _counter = 0;
     }

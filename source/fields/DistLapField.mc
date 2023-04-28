@@ -26,11 +26,6 @@ class DistLapField extends Field {
         }
     }
 
-    function onStart() as Void {
-        Field.onStart();
-        _startDistance = null;
-    }
-
     function onStop() as Void {
         Field.onStop();
         _startDistance = null;
