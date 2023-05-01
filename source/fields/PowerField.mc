@@ -184,4 +184,21 @@ class PowerField extends Field {
         dc.drawText(x + w2, y + h - _fontHeights[fi] - _valueYPadding, _fonts[fi], _value, Graphics.TEXT_JUSTIFY_CENTER);      
 
     }
+
+    function persistContext(context as Dictionary) {
+        Field.persistContext(context);
+        context["PowerField.values"] = _values;
+        context["PowerField.valueIdx1"] = _valueIdx1;
+        context["PowerField.valueIdx2"] = _valueIdx2;
+        context["PowerField.valuesSum"] = _valuesSum;
+    }
+
+    function restoreContext(workout as WorkoutInfo?, context as Dictionary) {
+        Field.restoreContext(workout, context);
+
+        _values = context["PowerField.values"] as Array<Number>;
+        _valueIdx1 = context["PowerField.valueIdx1"] as Number;
+        _valueIdx2 = context["PowerField.valueIdx2"] as Number;
+        _valuesSum = context["PowerField.valuesSum"] as Number;
+    }    
 }

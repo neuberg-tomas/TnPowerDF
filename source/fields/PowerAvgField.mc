@@ -46,4 +46,17 @@ class PowerAvgField extends Field {
         _counter = 0;
     }
 
+    function persistContext(context as Dictionary) {
+        Field.persistContext(context);
+        context["PowerAvgField.sum"] = _sum;
+        context["PowerAvgField.counter"] = _counter;
+        context["PowerAvgField.prevTimer"] = _prevTimer;
+    }
+
+    function restoreContext(workout as WorkoutInfo?, context as Dictionary) {
+        Field.restoreContext(workout, context);
+        _sum = context["PowerAvgField.sum"] as Double;
+        _counter = context["PowerAvgField.counter"] as Number;
+        _prevTimer = context["PowerAvgField.prevTimer"] as Number;
+   }
 }

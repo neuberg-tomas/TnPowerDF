@@ -35,4 +35,14 @@ class DistLapField extends Field {
         Field.onLap();
         _startDistance = null;
     }
+
+    function persistContext(context as Dictionary) {
+        Field.persistContext(context);
+        context["DistLapField.startDistance"] = _startDistance;
+    }
+
+    function restoreContext(workout as WorkoutInfo?, context as Dictionary) {
+        Field.restoreContext(workout, context);
+        _startDistance = context["DistLapField.startDistance"] as Float?;
+    }
 }

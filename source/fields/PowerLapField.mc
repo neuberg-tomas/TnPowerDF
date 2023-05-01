@@ -61,4 +61,18 @@ class PowerLapField extends Field {
         _powerSum = 0d;
         _powerCount = 0;
     }
+
+    function persistContext(context as Dictionary) {
+        Field.persistContext(context);
+        context["PowerLapField.sum"] = _powerSum;
+        context["PowerLapField.counter"] = _powerCount;
+        context["PowerLapField.prevTimer"] = _prevTimer;
+    }
+
+    function restoreContext(workout as WorkoutInfo?, context as Dictionary) {
+        Field.restoreContext(workout, context);
+        _powerSum = context["PowerLapField.sum"] as Double;
+        _powerCount = context["PowerLapField.counter"] as Number;
+        _prevTimer = context["PowerLapField.prevTimer"] as Number;
+    }
 }

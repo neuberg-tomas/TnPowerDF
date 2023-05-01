@@ -71,6 +71,16 @@ class WorkoutInfo {
             stepStartTime, stepDuration, stepTargetType, stepLo, stepHi, stepNextLo, stepNextHi
         ]);
     }
+
+    function persistContext(context as Dictionary) {
+        context["workout.stepStartTime"] = stepStartTime;
+        context["workout.almostFinishTime"] = almostFinishTime;
+    }
+
+    function restoreContext(context as Dictionary) {
+        stepStartTime = context["workout.stepStartTime"] as Number;
+        almostFinishTime = context["workout.almostFinishTime"] as Number;
+    }
 }
 
 class ComputeContext {

@@ -4,6 +4,7 @@ import Toybox.Lang;
 
 using Toybox.WatchUi as Ui;
 using Toybox.Application.Properties as Prop;
+using Toybox.Application.Storage;
 using Toybox.System;
 
 class TnPowerDFView extends Ui.DataField {
@@ -61,10 +62,25 @@ class TnPowerDFView extends Ui.DataField {
             _powerZones[i] = computePowerZone(ftp, Prop.getValue("powerZone" + i + "PercMax") as Number);
         }
 
-        $.log("Activity: " + Activity.getActivityInfo());
-        $.log("Workout: " + Activity.getCurrentWorkoutStep());
+        var context = Storage.getValue("context") as Dictionary;
+        if (context != null) {
+            log("restoring context");
+            _timer = context["timer"] as Number; 
 
-        //TODO: resume persisted context
+            if (Activity.getCurrentWorkoutStep() != null) {
+                $.log("restoring workout");
+                _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+                _workout.restoreContext(context);
+            }
+
+            for (var i = 0; i < _fields.size(); i++) {
+                try {
+                    _fields[i].restoreContext(_workout, context);
+                } catch (ex) {
+                   $.log("field." + i + " restore context exception: " + ex.getErrorMessage());
+                }
+            }  
+        }
 
         _initialized = true;
     }
@@ -76,6 +92,7 @@ class TnPowerDFView extends Ui.DataField {
             }
 
             if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {
+                $.log("onWorkoutStepComplete wasn't call but current workout step is null");
                 onWorkoutStepComplete();
             }
 
@@ -85,11 +102,11 @@ class TnPowerDFView extends Ui.DataField {
                 try {
                     _fields[i].compute(info, context);
                 } catch (ex) {
-                   System.println("field." + i + " compute exception: " + ex.getErrorMessage());
+                   $.log("field." + i + " compute exception: " + ex.getErrorMessage());
                 }
             }   
         } catch (ex) {
-            System.println("compute exception: " + ex.getErrorMessage());
+            $.log("compute exception: " + ex.getErrorMessage());
         }
     }
 
@@ -163,7 +180,15 @@ class TnPowerDFView extends Ui.DataField {
         $.log("onTimerStop");        
         _timerActive = false;
 
-        //TODO: persist context
+        var context = {"timer" => _timer};
+        if (_workout != null) {
+            _workout.persistContext(context);
+        }
+        for (var i = 0; i < _fields.size(); i++) {
+            _fields[i].persistContext(context);
+        }
+
+        Storage.setValue("context", context);
     }
 
     function onTimerPause() as Void {
@@ -185,13 +210,13 @@ class TnPowerDFView extends Ui.DataField {
             _fields[i].onStop();
         }
 
-        //TODO: deletet persisted context
+        Storage.deleteValue("context");
     }
 
     function onUpdate(dc as Dc) as Void {
         try {
             if (_initialized == null) {
-                System.println("onUpdate: not initialized yet");
+                $.log("onUpdate: not initialized yet");
                 return;
             }
             dc.setColor(_lineColor, _bgColor);
@@ -223,51 +248,51 @@ class TnPowerDFView extends Ui.DataField {
             try {
                 _fields[0].draw(dc, wo, 0, fw1, fh1);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field0.onUpdate exception: " + ex.getErrorMessage());
             }
 
             // 1th row
             try {
                 _fields[1].draw(dc, wo, h1 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field1.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
                 _fields[2].draw(dc, w1 + _lineWidth, h1 + _lineWidth, fw2_2, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field2.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
                 _fields[3].draw(dc, w - w1 + _lineWidth, h1 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field3.onUpdate exception: " + ex.getErrorMessage());
             }
 
             // 2nd row
             try {
                 _fields[4].draw(dc, wo, h2 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field4.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
                 _fields[5].draw(dc, w1 + _lineWidth, h2 + _lineWidth, fw2_2, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field5.onUpdate exception: " + ex.getErrorMessage());
             }
             try {
                 _fields[6].draw(dc, w - w1 + _lineWidth, h2 + _lineWidth, fw2_1, fh2);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field6.onUpdate exception: " + ex.getErrorMessage());
             }
 
             // bottom
             try {
                 _fields[7].draw(dc, wo, h3 + _lineWidth, fw1, fh1);
             } catch (ex) {
-               System.println("field0.onUpdate exception: " + ex.getErrorMessage());
+               $.log("field7.onUpdate exception: " + ex.getErrorMessage());
             }
         } catch (ex) {
-            System.println("onUpdate exception: " + ex.getErrorMessage());
+            $.log("onUpdate exception: " + ex.getErrorMessage());
         }
     }
 }

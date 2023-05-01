@@ -77,6 +77,13 @@ class Field {
     function onLap() as Void {
     }
 
+    function persistContext(context as Dictionary) {
+    }
+
+    function restoreContext(workout as WorkoutInfo?, context as Dictionary) {
+        _workout = workout;
+    }
+
     protected function setZone(zone as Number?) as Void {
         if (zone == null) {
             _zone = null;
