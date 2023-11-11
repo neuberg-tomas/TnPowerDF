@@ -233,5 +233,8 @@ class Field {
                 m.format("%d"), s.format("%02d")
             ]);
     }
-}
 
+    protected function formatDistance(distance as Float) as String {
+        return distance < 10 ? distance.format("%.2f") : distance.format("%.1f");
+    }
+}

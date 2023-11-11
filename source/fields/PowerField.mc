@@ -1,4 +1,5 @@
 import Toybox.Activity;
+import Toybox.Attention;
 import Toybox.Lang;
 import Toybox.Graphics;
 import Toybox.WatchUi;
@@ -20,6 +21,7 @@ class PowerField extends Field {
     private var _valueIdx1 as Number = 0;
     private var _valueIdx2 as Number = 0;
     private var _valuesSum as Number = 0;
+    private var _missedValues as Number?;
 
     function initialize() {
         Field.initialize(LBL);
@@ -41,7 +43,17 @@ class PowerField extends Field {
         _label = avgDuration > 0 ? avgDuration + "s " + LBL : LBL;
         if (v == null) {
             reset();
+            if (_missedValues != null) {
+                _missedValues++;
+                if (_missedValues % 3 == 1) {
+                    Attention.playTone({:toneProfile => [
+                        new ToneProfile(800,  125),
+                        new ToneProfile(0,  125)
+                    ], :repeatCount => 8});
+                }
+            }
         } else {
+            _missedValues = 0;
             if (avgDuration > 0) {
                 _valueIdx2 = (_valueIdx2 + 1) % _maxAvgDuration;
                 _values[_valueIdx2] = v;

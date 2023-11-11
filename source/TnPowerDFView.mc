@@ -23,6 +23,7 @@ class TnPowerDFView extends Ui.DataField {
     private const _lineWidth as Number = Prop.getValue("linesWidth").toNumber();
     
     private var _timer as Number = 0;
+    private var _distance as Float = 0.0;
     private var _timerActive as Boolean = false;
     private var _heartRateZones as Array<Number>?;
     private const _powerZones as Array<Number> = new Array<Number>[5];
@@ -66,10 +67,11 @@ class TnPowerDFView extends Ui.DataField {
         if (context != null) {
             log("restoring context");
             _timer = context["timer"] as Number; 
+            _distance = context["distance"] as Float; 
 
             if (Activity.getCurrentWorkoutStep() != null) {
                 $.log("restoring workout");
-                _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+                _workout = new WorkoutInfo(_timer, _distance, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
                 _workout.restoreContext(context);
             }
 
@@ -90,7 +92,9 @@ class TnPowerDFView extends Ui.DataField {
             if (_timerActive) {
                 _timer ++;
             }
-
+            if (info.elapsedDistance != null) {
+                _distance = info.elapsedDistance;
+            }
             if (_workout != null && _workout.isSet() && !_workout.isStatic() && Activity.getCurrentWorkoutStep() == null) {
                 $.log("onWorkoutStepComplete wasn't call but current workout step is null");
                 onWorkoutStepComplete();
@@ -116,7 +120,7 @@ class TnPowerDFView extends Ui.DataField {
 
     function onWorkoutStarted() as Void {
         $.log("onWorkoutStarted");
-        _workout = new WorkoutInfo(_timer, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
+        _workout = new WorkoutInfo(_timer, _distance, Activity.getCurrentWorkoutStep(), Activity.getNextWorkoutStep());
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onWorkoutStep(_workout);
         }
@@ -135,15 +139,15 @@ class TnPowerDFView extends Ui.DataField {
         var step = Activity.getCurrentWorkoutStep();
         if (step == null) {
             if (_workout != null && Prop.getValue("useLastStepTarget")) {
-                return new WorkoutInfo(_timer, null, null).setStaticPowerTarget(_workout.stepLo, _workout.stepHi);
+                return new WorkoutInfo(_timer, _distance, null, null).setStaticPowerTarget(_workout.stepLo, _workout.stepHi);
             }
             if (Prop.getValue("useStaticTarget")) {                 
-                return new WorkoutInfo(_timer, null, null).setStaticPowerTarget(
+                return new WorkoutInfo(_timer, _distance, null, null).setStaticPowerTarget(
                     Prop.getValue("staticTargetLo") as Number, Prop.getValue("staticTargetHi") as Number
                 );
             }
         }
-        return new WorkoutInfo(_timer, step, Activity.getNextWorkoutStep());
+        return new WorkoutInfo(_timer, _distance, step, Activity.getNextWorkoutStep());
     }
 
     function onTimerLap() as Void {
@@ -151,6 +155,7 @@ class TnPowerDFView extends Ui.DataField {
 
         if (_workout != null && _workout.isStatic()) {
             _workout.stepStartTime = _timer;
+            _workout.stepStartDistance = _distance;
         }
         for (var i = 0; i < _fields.size(); i++) {
             _fields[i].onLap();
@@ -163,7 +168,7 @@ class TnPowerDFView extends Ui.DataField {
         _timerActive = true;
 
         if ((_workout == null || !_workout.isSet()) && Prop.getValue("useStaticTarget")) {
-            _workout = new WorkoutInfo(_timer, null, null).setStaticPowerTarget(
+            _workout = new WorkoutInfo(_timer, _distance, null, null).setStaticPowerTarget(
                     Prop.getValue("staticTargetLo") as Number, Prop.getValue("staticTargetHi") as Number
                 );
             for (var i = 0; i < _fields.size(); i++) {
@@ -180,7 +185,7 @@ class TnPowerDFView extends Ui.DataField {
         $.log("onTimerStop");        
         _timerActive = false;
 
-        var context = {"timer" => _timer};
+        var context = {"timer" => _timer, "distance" => _distance};
         if (_workout != null) {
             _workout.persistContext(context);
         }

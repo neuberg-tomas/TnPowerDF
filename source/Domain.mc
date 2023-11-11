@@ -9,6 +9,7 @@ class WorkoutInfo {
     var stepDuration as Number?;
     var stepDurationType as WorkoutStepDurationType?;
     var stepStartTime as Number;
+    var stepStartDistance as Float;
     var almostFinishTime as Number?;
 
     var stepNextTargetType as WorkoutStepTargetType?;
@@ -17,8 +18,9 @@ class WorkoutInfo {
 
     private var _static as Boolean = false;
 
-    function initialize(timer as Number, currStep as WorkoutStepInfo?, nextStep as WorkoutStepInfo?) {
+    function initialize(timer as Number, distance as Float, currStep as WorkoutStepInfo?, nextStep as WorkoutStepInfo?) {
         stepStartTime = timer;
+        stepStartDistance = distance;
 
         if (currStep == null || !(currStep.step instanceof WorkoutStep)) {
             return;
@@ -28,6 +30,9 @@ class WorkoutInfo {
 
         stepTargetType = step.targetType;
         stepLo = normalizeTarget(stepTargetType, step.targetValueLow);
+        if (stepLo != null && stepLo < 10) {
+            stepLo = 0;
+        }
         stepHi = normalizeTarget(stepTargetType, step.targetValueHigh);
         
         stepDurationType = step.durationType;
@@ -35,6 +40,8 @@ class WorkoutInfo {
 
         if (stepDurationType == Activity.WORKOUT_STEP_DURATION_TIME && stepDuration > 10) {
             almostFinishTime =  stepStartTime + stepDuration - 4;
+        } else {
+            almostFinishTime = null;
         }
     
         if (nextStep != null && (nextStep.step instanceof WorkoutStep)) {
@@ -68,17 +75,19 @@ class WorkoutInfo {
 
     function dump() as String {
         return Lang.format("workout start=$1$, duration=$2$, type=$3$, lo=$4$, hi=$5$, next lo: $6$, hi: $7$", [
-            stepStartTime, stepDuration, stepTargetType, stepLo, stepHi, stepNextLo, stepNextHi
+            stepStartTime + "/" + stepStartDistance, stepDuration, stepTargetType, stepLo, stepHi, stepNextLo, stepNextHi
         ]);
     }
 
     function persistContext(context as Dictionary) {
         context["workout.stepStartTime"] = stepStartTime;
+        context["workout.stepStartDistance"] = stepStartDistance;
         context["workout.almostFinishTime"] = almostFinishTime;
     }
 
     function restoreContext(context as Dictionary) {
         stepStartTime = context["workout.stepStartTime"] as Number;
+        stepStartDistance = context["workout.stepStartDistance"] as Float;
         almostFinishTime = context["workout.almostFinishTime"] as Number;
     }
 }

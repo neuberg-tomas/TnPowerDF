@@ -8,6 +8,7 @@ using Toybox.Application.Properties as Prop;
 class TimeField extends Field {
 
     const LBL_REM = "T/Rem/Elp";
+    const LBL_DREM = "T/DRm/TEl";
     const LBL_LAP = "T/Lap/Elp";
 
     private var _elapsedTime as String;
@@ -37,6 +38,17 @@ class TimeField extends Field {
             }
             _label = LBL_REM;
             _value = formatTime(v);
+            _remValuePerc =  _workout.stepDuration > 0 ? v * 100 / _workout.stepDuration : null;
+            if (_remValuePerc > 100) {
+                _remValuePerc = 100;
+            }
+        } else if (_workout.stepDurationType == Activity.WORKOUT_STEP_DURATION_DISTANCE && info.elapsedDistance != null) {
+            var v = _workout.stepDuration - (info.elapsedDistance - _workout.stepStartDistance);
+            if (v < 0) {
+                v = 0;
+            }
+            _label = LBL_DREM;
+            _value = formatDistance(v / 1000.0);
             _remValuePerc =  _workout.stepDuration > 0 ? v * 100 / _workout.stepDuration : null;
             if (_remValuePerc > 100) {
                 _remValuePerc = 100;
