@@ -50,6 +50,11 @@ class PowerField extends Field {
                         new ToneProfile(800,  125),
                         new ToneProfile(0,  125)
                     ], :repeatCount => 8});
+                    Attention.vibrate([
+                        new VibeProfile(100, 500), 
+                        new VibeProfile(0,   500), 
+                        new VibeProfile(100, 500)
+                    ]);
                 }
             }
         } else {
