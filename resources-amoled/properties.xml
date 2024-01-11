@@ -1,15 +1,15 @@
 <resources>
     <properties>
         <property id="colorBg" type="number">0x000000</property>
-        <property id="linesColor" type="number">0x0080c0</property>
+        <property id="linesColor" type="number">0x434c51</property>
         
         <property id="labelColor" type="number">0xe0e0e0</property>
         <property id="labelYPadding" type="number">3</property>
 
         <property id="valueColor" type="number">0xffffff</property>
         <property id="valueMutedColor" type="number">0xe0e0e0</property>
-        <property id="valueLoColor" type="number">0xFF0000</property>
-        <property id="valueHiColor" type="number">0xFF00FF</property>
+        <property id="valueLoColor" type="number">0xFF5040</property>
+        <property id="valueHiColor" type="number">0xFF80FF</property>
         <property id="valueYPadding" type="number">9</property>
         <property id="nextTargetColor" type="number">#60b0ff</property>
 
@@ -17,7 +17,7 @@
         <property id="zone2Color" type="number">0xFFAA00</property>
         <property id="zone3Color" type="number">0x00AAFF</property>
         <property id="zone4Color" type="number">0x00FF00</property>
-        <property id="zone5Color" type="number">0xFF0000</property>
+        <property id="zone5Color" type="number">0xFF5040</property>
         <property id="zoneColorAsBg" type="boolean">false</property>
 
     </properties>

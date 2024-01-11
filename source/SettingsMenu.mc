@@ -70,7 +70,7 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
                 enterNumber(item, "envCurrTmp", "Real temp", -20, 50, 1, " °C");
                 break;
             case :mnuEnvCurrHum:
-                enterNumber(item, "envCurrHum", "Real humidity", 10, 100, 1, " %");
+                enterNumber(item, "envCurrHum", "Real humidity", 10, 99, 1, " %");
                 break;
             case :mnuEnvCurrAlt:
                 enterAlt(item, "envCurrAlt", "Real altitude");
@@ -79,7 +79,7 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
                 enterNumber(item, "envTestTmp", "Test temp", -20, 50, 1, " °C");
                 break;
             case :mnuEnvTestHum:
-                enterNumber(item, "envTestHum", "Test humidity", 10, 100, 1, " %");
+                enterNumber(item, "envTestHum", "Test humidity", 10, 99, 1, " %");
                 break;
             case :mnuEnvTestAlt:
                 enterAlt(item, "envTestAlt", "Test altitude");
@@ -119,13 +119,17 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
     private function enterNumber(item as MenuItem, property as String, title as String, min as Number, max as Number, step as Number,
             units as String) as Void {
         
-        var factory = new $.NumberFactory(min, max, step, {});
+        var factory1 = new $.NumberFactory(min / 10, max / 10, 1, {});
+        var factory2 = new $.NumberFactory(0, 9, step, {});
+
+        var v = Properties.getValue(property) as Number;
+        var absV = v < 0 ? -v : v;
         WatchUi.pushView(
             new Picker({
                 :title => new Text({:text=>title, :locX => WatchUi.LAYOUT_HALIGN_CENTER, :locY => WatchUi.LAYOUT_VALIGN_BOTTOM, 
                                     :color => Graphics.COLOR_WHITE}), 
-                :pattern => [factory],
-                :defaults =>[factory.getIndex(Properties.getValue(property))]
+                :pattern => [factory1, factory2],
+                :defaults =>[factory1.getIndex(v / 10, v), factory2.getIndex(absV % 10, v)]
             }), 
             new NumPropPickerDelegate(item, property, units, _mnuVersion), 
             WatchUi.SLIDE_LEFT
@@ -142,14 +146,15 @@ class SettingsMenuDelegate extends Menu2InputDelegate {
 
     private function enterBigNum(item as MenuItem, property as String, title as String, max as Number, units as String, mnuVersion as VersionMenuItem?) as Void {
         var factory1 = new $.NumberFactory(0, max / 100, 1, {});
-        var factory2 = new $.NumberFactory(0, 99, 1, {:format => "%02d"});
+        var factory2 = new $.NumberFactory(0, 9, 1, {});
+        var factory3 = new $.NumberFactory(0, 9, 1, {});
         var v = Properties.getValue(property) as Number;
         WatchUi.pushView(
             new Picker({
                 :title => new Text({:text=>title, :locX => WatchUi.LAYOUT_HALIGN_CENTER, :locY => WatchUi.LAYOUT_VALIGN_BOTTOM, 
                                     :color => Graphics.COLOR_WHITE}), 
-                :pattern => [factory1, factory2],
-                :defaults =>[factory1.getIndex(v / 100), factory2.getIndex(v % 100)]
+                :pattern => [factory1, factory2, factory3],
+                :defaults =>[factory1.getIndex(v / 100, v), factory2.getIndex((v / 10) % 10, v), factory3.getIndex(v % 10, v)]
             }), 
             new BigNumPropPickerDelegate(item, property, units, mnuVersion), 
             WatchUi.SLIDE_LEFT
@@ -207,7 +212,12 @@ class NumPropPickerDelegate extends PickerDelegate {
     }
 
     protected function computeValue(values as Array) as Number {
-        return values[0].toNumber();
+        var v1 = values[1].toNumber();
+        if (values[0] == '-') {
+            return -v1;
+        }
+        var v0 = values[0].toNumber() * 10;
+        return v0 < 0 ? -( -v0 + v1) : v0 + v1;
     }
 }
 
@@ -217,7 +227,7 @@ class BigNumPropPickerDelegate extends NumPropPickerDelegate {
     }
 
     protected function computeValue(values as Array) as Number {
-        return values[0].toNumber() * 100 + values[1].toNumber();
+        return values[0].toNumber() * 100 + values[1].toNumber() * 10 + values[2].toNumber();
     }
 }
 
