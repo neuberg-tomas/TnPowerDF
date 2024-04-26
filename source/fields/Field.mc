@@ -137,18 +137,18 @@ class Field {
     private function playAlert(timer as Number) {
         if (_alert == 1) {
             Attention.playTone({:toneProfile=>[
-                new ToneProfile(400,  400),
+                new ToneProfile(200,  400),
                 new ToneProfile(900,  400),
-                new ToneProfile(1400, 400)
+                new ToneProfile(2800, 400)
             ]});
             Attention.vibrate([
                 new VibeProfile(25, 400), new VibeProfile(50, 400), new VibeProfile(100, 400)
             ]);
         } else if (_alert == 2) {
             Attention.playTone({:toneProfile=>[
-                new ToneProfile(1400,  400),
+                new ToneProfile(2800,  400),
                 new ToneProfile(900,  400),
-                new ToneProfile(400, 400)
+                new ToneProfile(200, 400)
             ]});
             Attention.vibrate([
                 new VibeProfile(100, 400), new VibeProfile(50, 400), new VibeProfile(25, 400)
