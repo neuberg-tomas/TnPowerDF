@@ -1,6 +1,6 @@
 <strings>
     <string id="appName">TnPowerDF</string>
-    <string id="appVersion">Version 1.2.2</string>
+    <string id="appVersion">Version 1.2.5</string>
     
     <string id="settingErrorEnvTmp">Temparature must be number from range [-20, 50]</string>
     <string id="settingErrorEnvHum">Humidity must be number from range [10, 100]</string>
