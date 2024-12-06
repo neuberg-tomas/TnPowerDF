@@ -1,11 +1,15 @@
 import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Sensor;
 
 using Toybox.WatchUi as Ui;
 using Toybox.Application.Properties as Prop;
 using Toybox.Application.Storage;
 using Toybox.System;
+using Toybox.AntPlus;
+
+var globalPower as Number? = null;
 
 class TnPowerDFView extends Ui.DataField {
 
@@ -30,11 +34,15 @@ class TnPowerDFView extends Ui.DataField {
   
     private var _initialized as Boolean?;
 
+    private var _bikePower as AntPlus.BikePower?;
+
     function initialize() {
         DataField.initialize();
+        
+        _bikePower = new AntPlus.BikePower(new TnBikePowerListener());
 
         var heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_RUNNING);
-        if (heartRateZones == null) {
+        if (heartRateZones == null || heartRateZones.size() == 0) {
             $.log("no run specific HR zones found, using generic ones");
             heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
         } else {
@@ -89,6 +97,12 @@ class TnPowerDFView extends Ui.DataField {
 
     function compute(info as Activity.Info) as Void {     
         try {
+
+            var p = _bikePower.getCalculatedPower();
+            if (p != null) {
+                $.globalPower = p.power.toNumber();
+            }
+
             if (_timerActive) {
                 _timer ++;
             }
@@ -305,4 +319,16 @@ class TnPowerDFView extends Ui.DataField {
 function log(msg as String) as Void {
     var t = System.getClockTime();
     System.println(t.hour.format("%02d") + ":" + t.min.format("%02d") + ":" + t.sec.format("%02d") + " - " + msg);
+}
+
+class TnBikePowerListener extends AntPlus.BikePowerListener {
+    function initialize() {
+        BikePowerListener.initialize();
+    }
+
+    function onCalculatedPowerUpdate(data) {
+        $.globalPower = data.power;
+        $.log("onCalculatedPowerUpdate: " + $.globalPower);
+    }
+
 }

@@ -30,6 +30,7 @@ class PowerField extends Field {
         _nextTargetColor = Prop.getValue("nextTargetColor").toNumber();
         _valueMutedColor = Prop.getValue("valueMutedColor").toNumber();
         _gaugeColor = Prop.getValue("valueColor").toNumber();
+    
         reset();
         
         _initialized = true;
@@ -37,7 +38,7 @@ class PowerField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);       
-        var v = info.currentPower == null ? null : Math.round(info.currentPower / context.envCorrection).toNumber();
+        var v = $.globalPower == null ? null : Math.round($.globalPower / context.envCorrection).toNumber();
         _almostFinish = _workout != null && _workout.almostFinishTime != null && context.timer >= _workout.almostFinishTime;
         var avgDuration = $.min(_maxAvgDuration, Prop.getValue("pwrAveraging") as Number);
         _label = avgDuration > 0 ? avgDuration + "s " + LBL : LBL;

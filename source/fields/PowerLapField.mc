@@ -20,8 +20,8 @@ class PowerLapField extends Field {
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);
         if (context.timer != null) {
-            if (context.timer != _prevTimer && info.currentPower != null) {
-                _powerSum += info.currentPower / context.envCorrection;
+            if (context.timer != _prevTimer && $.globalPower != null) {
+                _powerSum += $.globalPower / context.envCorrection;
                 _powerCount ++;
             }
             _prevTimer = context.timer;

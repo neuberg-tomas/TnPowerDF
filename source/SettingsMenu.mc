@@ -240,7 +240,7 @@ class AltTypeMenuDelegate extends Menu2InputDelegate {
     }
 
     public function onSelect(item as MenuItem) as Void {
-        var type = item.getId().toNumber();
+        var type = item.getId() as Number;
         Properties.setValue("alertType", type);
         _parentItem.setSubLabel(alertTypeLabels[type]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
@@ -256,7 +256,7 @@ class PwrAvgMenuDelegate extends Menu2InputDelegate {
     }
 
     public function onSelect(item as MenuItem) as Void {
-        var avg = item.getId().toNumber();
+        var avg = item.getId() as Number;
         Properties.setValue("pwrAveraging", avg);
         _parentItem.setSubLabel(pwrAvgLabels[avg]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);

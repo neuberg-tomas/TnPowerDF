@@ -3,6 +3,8 @@ import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.Math;
 import Toybox.WatchUi;
+import Toybox.Sensor;
+import Toybox.System;
 using Toybox.Application.Properties as Prop;
 
 typedef Numeric as Number or Float or Long or Double;
@@ -24,15 +26,16 @@ class TnPowerDFApp extends Application.AppBase {
     }
 
     //! Return the initial view of your application here
-    function getInitialView() as Array<Views or InputDelegates>? {
-        return [ new TnPowerDFView() ] as Array<Views or InputDelegates>;
+    function getInitialView() {
+        return [ new TnPowerDFView() ];
     }
 
-    function getSettingsView() as Array<Views or InputDelegates>? {
+    function getSettingsView()  {
         var menu = new SettingsMenu();
-        return [ menu, new SettingsMenuDelegate(menu) ] as Array<Views or InputDelegates>;
+        return [ menu, new SettingsMenuDelegate(menu) ];
     }
 }
+
 
 function getApp() as TnPowerDFApp {
     return Application.getApp() as TnPowerDFApp;
