@@ -38,7 +38,7 @@ class PowerField extends Field {
 
     function compute(info as Activity.Info, context as ComputeContext) as Void {
         Field.compute(info, context);       
-        var v = $.globalPower == null ? null : Math.round($.globalPower / context.envCorrection).toNumber();
+        var v = context.power == null ? null : Math.round(context.power / context.envCorrection).toNumber();
         _almostFinish = _workout != null && _workout.almostFinishTime != null && context.timer >= _workout.almostFinishTime;
         var avgDuration = $.min(_maxAvgDuration, Prop.getValue("pwrAveraging") as Number);
         _label = avgDuration > 0 ? avgDuration + "s " + LBL : LBL;

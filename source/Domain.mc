@@ -97,10 +97,12 @@ class ComputeContext {
     private var _heartRateZones as Array<Number>?;
     var timer as Number?;
     var envCorrection as Float;
+    var power as Float;
 
-    function initialize(timer as Number, powerZones as Array<Number>?, heartRateZones as Array<Number>?, envCorrection as Float) {
+    function initialize(timer as Number, powerZones as Array<Number>?, heartRateZones as Array<Number>?, envCorrection as Float, power as Float) {
         self.timer = timer;
         self.envCorrection = envCorrection;
+        self.power = power;
         _powerZones = powerZones;
         _heartRateZones = heartRateZones;
     }

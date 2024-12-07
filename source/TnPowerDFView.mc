@@ -9,8 +9,6 @@ using Toybox.Application.Storage;
 using Toybox.System;
 using Toybox.AntPlus;
 
-var globalPower as Number? = null;
-
 class TnPowerDFView extends Ui.DataField {
 
     private const _fields as Array<Field> = [
@@ -39,7 +37,7 @@ class TnPowerDFView extends Ui.DataField {
     function initialize() {
         DataField.initialize();
         
-        _bikePower = new AntPlus.BikePower(new TnBikePowerListener());
+        _bikePower = new AntPlus.BikePower(null);
 
         var heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_RUNNING);
         if (heartRateZones == null || heartRateZones.size() == 0) {
@@ -99,9 +97,7 @@ class TnPowerDFView extends Ui.DataField {
         try {
 
             var p = _bikePower.getCalculatedPower();
-            if (p != null) {
-                $.globalPower = p.power.toNumber();
-            }
+            var power = p == null ? null : p.power;
 
             if (_timerActive) {
                 _timer ++;
@@ -114,7 +110,7 @@ class TnPowerDFView extends Ui.DataField {
                 onWorkoutStepComplete();
             }
 
-            var context = new ComputeContext(_timer, _powerZones, _heartRateZones, $.computeEnvCorrection(info));
+            var context = new ComputeContext(_timer, _powerZones, _heartRateZones, $.computeEnvCorrection(info), power);
 
             for (var i = 0; i < _fields.size(); i++) {
                 try {
@@ -319,16 +315,4 @@ class TnPowerDFView extends Ui.DataField {
 function log(msg as String) as Void {
     var t = System.getClockTime();
     System.println(t.hour.format("%02d") + ":" + t.min.format("%02d") + ":" + t.sec.format("%02d") + " - " + msg);
-}
-
-class TnBikePowerListener extends AntPlus.BikePowerListener {
-    function initialize() {
-        BikePowerListener.initialize();
-    }
-
-    function onCalculatedPowerUpdate(data) {
-        $.globalPower = data.power;
-        $.log("onCalculatedPowerUpdate: " + $.globalPower);
-    }
-
 }
